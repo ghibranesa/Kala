@@ -295,6 +295,15 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .ov-btn.active{box-shadow:0 0 0 2px currentColor;}
 .modal-hint{font-size:10.5px;color:var(--text-muted);}
 
+/* ===== AYAT CARD ===== */
+.ayat-card{padding:18px 20px;display:flex;flex-direction:column;gap:10px;}
+.ayat-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ayat-ref{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.2px;display:flex;align-items:center;gap:5px;}
+.ayat-refresh-btn{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--text-muted);background:rgba(79,130,160,0.1);border:1px solid rgba(79,130,160,0.2);border-radius:var(--r-pill);padding:3px 9px;cursor:pointer;transition:all 0.15s;font-family:var(--font);}
+.ayat-refresh-btn:hover{background:rgba(79,130,160,0.2);color:var(--accent);}
+.ayat-refresh-btn:disabled{opacity:0.5;cursor:wait;}
+.ayat-text{font-size:13px;line-height:1.65;color:var(--text-primary);font-style:italic;margin:0;}
+
 /* Reset bar */
 .reset-bar{display:flex;align-items:center;justify-content:flex-end;padding:0 4px;}
 .btn-reset{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
@@ -336,6 +345,17 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
     </div>
   </header>
+
+  <!-- Section: Kutipan Ayat (Full Width di Bawah Header) -->
+  <div class="glass-light ayat-card">
+    <div class="ayat-header">
+      <span class="ayat-ref"><span class="ic" id="ic-sl-7"></span> <span id="ayat-ref">Memuat ayat…</span></span>
+      <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
+        <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
+      </button>
+    </div>
+    <p class="ayat-text" id="ayat-text">Mengambil terjemahan Al-Qur'an…</p>
+  </div>
 
   <!-- MAIN GRID -->
   <div class="main-grid">
@@ -757,6 +777,8 @@ function initIcons(){
   setIcon(document.getElementById('ic-sl-4'),'bar-chart',11);
   setIcon(document.getElementById('ic-sl-5'),'briefcase',11);
   setIcon(document.getElementById('ic-sl-6'),'calendar',11);
+  setIcon(document.getElementById('ic-sl-7'),'moon',11);
+  setIcon(document.getElementById('ic-ayat-refresh'),'rotate-ccw',11);
 }
 
 // ============================================================
@@ -1448,12 +1470,43 @@ function tick(){
 }
 
 // ============================================================
+// RANDOM AYAT AL-QURAN (ID)
+// ============================================================
+async function fetchRandomAyat(){
+  const refEl=document.getElementById('ayat-ref');
+  const txtEl=document.getElementById('ayat-text');
+  const btn=document.getElementById('btn-ayat-refresh');
+  if(!refEl||!txtEl)return;
+  if(btn)btn.disabled=true;
+  txtEl.style.opacity='0.5';
+  try{
+    const randomAyahNum=Math.floor(Math.random()*6236)+1;
+    const res=await fetch(`https://api.alquran.cloud/v1/ayah/${randomAyahNum}/id.indonesian`);
+    const json=await res.json();
+    if(json.code===200&&json.data){
+      const surah=json.data.surah.englishName;
+      const numInSurah=json.data.numberInSurah;
+      refEl.textContent=`QS. ${surah} : ${numInSurah}`;
+      txtEl.textContent=`"${json.data.text}"`;
+    }else{
+      throw new Error('Invalid response');
+    }
+  }catch(e){
+    refEl.textContent='QS. Al-Insyirah : 6';
+    txtEl.textContent='"Sesungguhnya bersama kesulitan ada kemudahan."';
+  }finally{
+    txtEl.style.opacity='1';
+    if(btn)btn.disabled=false;
+  }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 (function init(){
   const now=new Date();
   state.calYear=now.getFullYear();state.calMonth=now.getMonth();
-  initIcons();initGauge();applyState();tick();
+  initIcons();initGauge();applyState();tick();fetchRandomAyat();
   setInterval(tick,250);
 })();
 </script>
