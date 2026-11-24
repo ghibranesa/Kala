@@ -1,0 +1,1420 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hitung Mundur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg-from:#D8E1E8; --bg-to:#A8B9C9;
+  --glass-light:rgba(255,255,255,0.58);
+  --glass-border:rgba(255,255,255,0.5);
+  --glass-dark:rgba(68,88,112,0.9);
+  --glass-dark-2:rgba(52,70,92,0.93);
+  --glass-dark-border:rgba(255,255,255,0.16);
+  --text-primary:#1a2a38; --text-secondary:#3e5668;
+  --text-muted:#6e8fa8; --text-on-dark:#edf2f7;
+  --text-on-dark-muted:rgba(237,242,247,0.6);
+  --accent:#4f82a0; --accent-light:#7fb3cf;
+  --accent-warm:#e09870; --accent-teal:#3ea494; --accent-rose:#c26b82;
+  --accent-wfh:#8b6fcc;
+  --dot-ramadan:#f59e5a; --dot-syawal:#5ec4b4; --dot-custom:#9b8edd;
+  --dot-libur:#df6070; --dot-peringatan:#6a9ec4;
+  --status-working-bg:rgba(62,164,148,0.18); --status-working-c:#3ea494; --status-working-b:rgba(62,164,148,0.3);
+  --status-wfh-bg:rgba(139,111,204,0.18);    --status-wfh-c:#8b6fcc;    --status-wfh-b:rgba(139,111,204,0.3);
+  --status-libur-bg:rgba(194,107,130,0.18);  --status-libur-c:#c26b82;  --status-libur-b:rgba(194,107,130,0.3);
+  --status-offduty-bg:rgba(110,143,168,0.15);--status-offduty-c:#6e8fa8;--status-offduty-b:rgba(110,143,168,0.25);
+  --font:'DM Sans',system-ui,sans-serif;
+  --r-card:22px; --r-inner:14px; --r-pill:999px;
+  --ease:cubic-bezier(0.25,0.46,0.45,0.94);
+  --sh:0 2px 20px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-from:#151f2e;--bg-to:#0d1520;
+  --glass-light:rgba(255,255,255,0.06);--glass-border:rgba(255,255,255,0.11);
+  --glass-dark:rgba(18,28,44,0.94);--glass-dark-2:rgba(12,20,34,0.96);
+  --text-primary:#ddeaf4;--text-secondary:#8aafc6;--text-muted:#4f728a;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg-from:#151f2e;--bg-to:#0d1520;
+  --glass-light:rgba(255,255,255,0.06);--glass-border:rgba(255,255,255,0.11);
+  --glass-dark:rgba(18,28,44,0.94);--glass-dark-2:rgba(12,20,34,0.96);
+  --text-primary:#ddeaf4;--text-secondary:#8aafc6;--text-muted:#4f728a;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;font-family:var(--font);font-size:14px;background:linear-gradient(135deg,var(--bg-from) 0%,var(--bg-to) 100%);background-attachment:fixed;color:var(--text-primary);min-height:100%;}
+body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px;}
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(80px);opacity:0.3;pointer-events:none;z-index:0;}
+body::before{width:600px;height:600px;background:radial-gradient(circle,#6fa3c0 0%,transparent 70%);top:-150px;right:-100px;}
+body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0%,transparent 70%);bottom:-80px;left:-80px;}
+
+.page-wrapper{position:relative;z-index:1;max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+
+/* GLASS */
+.glass-light{background:var(--glass-light);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--r-card);box-shadow:var(--sh);}
+.glass-dark{background:var(--glass-dark);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-dark-border);border-radius:var(--r-card);color:var(--text-on-dark);}
+.glass-dark-2{background:var(--glass-dark-2);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-dark-border);border-radius:var(--r-card);color:var(--text-on-dark);}
+
+.ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ic svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ===== SECTION LABEL ===== */
+.section-label{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);padding:0 2px;}
+.section-label .sl-line{flex:1;height:1px;background:linear-gradient(90deg,currentColor 0%,transparent 100%);opacity:0.25;}
+
+/* ===== HEADER ===== */
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;gap:12px;flex-wrap:wrap;}
+.header-brand{display:flex;flex-direction:column;gap:3px;}
+.app-name{font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:-0.4px;line-height:1;display:flex;align-items:center;gap:7px;}
+.app-name .ic{color:var(--accent);}
+.date-line{font-size:11px;color:var(--text-secondary);font-weight:400;line-height:1.4;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.clock-block{text-align:right;}
+.clock-display{font-size:24px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1;}
+.clock-tz{font-size:9.5px;font-weight:600;color:var(--text-muted);letter-spacing:0.6px;margin-top:1px;}
+
+/* Status badge — clickable */
+.status-badge{padding:6px 12px;border-radius:var(--r-pill);font-size:11px;font-weight:700;letter-spacing:0.3px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;user-select:none;}
+.status-badge:hover{filter:brightness(1.08);transform:scale(1.03);}
+.status-badge.working{background:var(--status-working-bg);color:var(--status-working-c);border-color:var(--status-working-b);}
+.status-badge.wfh{background:var(--status-wfh-bg);color:var(--status-wfh-c);border-color:var(--status-wfh-b);}
+.status-badge.libur{background:var(--status-libur-bg);color:var(--status-libur-c);border-color:var(--status-libur-b);}
+.status-badge.offduty{background:var(--status-offduty-bg);color:var(--status-offduty-c);border-color:var(--status-offduty-b);}
+
+/* ===== MAIN GRID ===== */
+.main-grid{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto;gap:14px;}
+.col-left{grid-column:1;display:flex;flex-direction:column;gap:14px;}
+.col-right{grid-column:2;display:flex;flex-direction:column;gap:14px;}
+
+/* ===== HERO CARD ===== */
+.hero-card{padding:24px 26px;display:flex;flex-direction:column;gap:16px;}
+.hero-switcher{display:flex;background:rgba(0,0,0,0.07);border-radius:var(--r-pill);padding:3px;gap:2px;width:fit-content;}
+.hero-switcher button{padding:6px 15px;border:none;border-radius:var(--r-pill);font-family:var(--font);font-size:11.5px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--text-secondary);background:transparent;white-space:nowrap;}
+.hero-switcher button.active{background:var(--glass-dark);color:var(--text-on-dark);box-shadow:0 2px 10px rgba(0,0,0,0.18);}
+.hero-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.hero-title-row h2{margin:0 0 3px;font-size:19px;font-weight:700;color:var(--text-primary);line-height:1.25;text-wrap:balance;}
+.hero-target-date{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px;}
+.target-date-pill{font-weight:600;color:var(--text-secondary);background:rgba(79,130,160,0.1);padding:2px 8px;border-radius:var(--r-pill);border:1px solid rgba(79,130,160,0.2);}
+.day-adjust-btns{display:flex;align-items:center;gap:4px;}
+.day-adjust-btns button{width:24px;height:24px;border-radius:var(--r-pill);border:1px solid rgba(79,130,160,0.3);background:rgba(79,130,160,0.1);color:var(--accent);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:var(--font);}
+.day-adjust-btns button:hover{background:rgba(79,130,160,0.22);transform:scale(1.08);}
+.day-adjust-btns span{font-size:10.5px;color:var(--text-muted);font-weight:600;white-space:nowrap;}
+.add-timer-btn{width:28px;height:28px;border-radius:var(--r-pill);border:2px dashed rgba(79,130,160,0.4);background:transparent;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.add-timer-btn:hover{border-color:var(--accent);background:rgba(79,130,160,0.1);}
+
+.countdown-digits{display:flex;align-items:flex-end;gap:0;}
+.digit-block{display:flex;flex-direction:column;align-items:center;flex:1;}
+.digit-sep{font-size:40px;font-weight:700;color:var(--accent);opacity:0.5;align-self:flex-end;padding-bottom:17px;line-height:1;flex-shrink:0;width:16px;text-align:center;}
+.digit-num{font-size:56px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);letter-spacing:-2px;line-height:1;}
+.digit-label{font-size:9.5px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:5px;}
+
+.progress-section{display:flex;flex-direction:column;gap:9px;}
+.progress-row{display:flex;align-items:center;gap:8px;}
+.progress-label{font-size:11px;font-weight:600;color:var(--text-secondary);width:74px;flex-shrink:0;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.progress-track{flex:1;height:5px;border-radius:var(--r-pill);background:rgba(0,0,0,0.07);overflow:hidden;}
+.progress-fill{height:100%;border-radius:var(--r-pill);transition:width 1s var(--ease);}
+.progress-fill.ramadan{background:linear-gradient(90deg,var(--dot-ramadan),#f7c37b);}
+.progress-fill.syawal{background:linear-gradient(90deg,var(--dot-syawal),#8ed8ce);}
+.progress-pct{font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-muted);width:34px;text-align:right;flex-shrink:0;}
+
+/* ===== METRICS STRIP ===== */
+.metrics-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px 20px;}
+.metric-tile{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.55);border-radius:var(--r-inner);padding:11px 13px;display:flex;flex-direction:column;gap:3px;transition:background 0.15s;}
+.metric-tile:hover{background:rgba(255,255,255,0.6);}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .metric-tile{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}}
+:root[data-theme="dark"] .metric-tile{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+.m-val{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);line-height:1;letter-spacing:-0.5px;}
+.m-label{font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:0.2px;display:flex;align-items:center;gap:4px;margin-top:1px;}
+.m-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ===== GAUGE CARD ===== */
+.gauge-card{padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
+.gauge-header{display:flex;align-items:center;justify-content:space-between;}
+.gauge-title{font-size:12px;font-weight:700;color:var(--text-secondary);letter-spacing:0.2px;}
+.gauge-edit-btn{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--text-muted);background:rgba(79,130,160,0.1);border:1px solid rgba(79,130,160,0.2);border-radius:var(--r-pill);padding:3px 9px;cursor:pointer;transition:all 0.15s;font-family:var(--font);}
+.gauge-edit-btn:hover{background:rgba(79,130,160,0.2);color:var(--accent);}
+.gauge-body{display:flex;align-items:center;gap:16px;}
+.gauge-svg-wrap{position:relative;width:150px;height:84px;flex-shrink:0;}
+.gauge-svg-wrap svg{width:100%;height:100%;}
+.gauge-center-text{position:absolute;bottom:0;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;}
+.gauge-pct-num{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);line-height:1;letter-spacing:-0.5px;}
+.gauge-pct-label{font-size:9.5px;color:var(--text-muted);font-weight:600;letter-spacing:0.4px;}
+.gauge-info{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.gauge-time-row{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text-muted);font-weight:600;font-variant-numeric:tabular-nums;width:150px;}
+.gauge-stat{font-size:11px;color:var(--text-secondary);}
+.gauge-stat strong{font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;}
+
+/* hidden sync inputs */
+.gauge-hidden{display:none;}
+
+/* ===== JAM PULANG + NEXT EVENT ===== */
+.bottom-left-row{display:flex;flex-direction:column;gap:10px;}
+.card-pulang{padding:18px 20px;display:flex;flex-direction:column;gap:10px;border-radius:20px;}
+.cp-header{display:flex;align-items:center;justify-content:space-between;}
+.cp-label-top{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-on-dark-muted);}
+.cp-edit-btn{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.1);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
+.cp-edit-btn:hover{background:rgba(255,255,255,0.22);color:white;}
+.cp-title{font-size:14px;font-weight:600;color:var(--text-on-dark);display:flex;align-items:center;gap:6px;}
+.cp-digits{display:flex;align-items:baseline;gap:1px;}
+.cp-num{font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-on-dark);letter-spacing:-1.5px;line-height:1;}
+.cp-sep{font-size:26px;font-weight:600;color:var(--text-on-dark-muted);line-height:1;}
+.cp-unit-row{display:flex;gap:0;}
+.cp-unit{font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;text-transform:uppercase;flex:1;text-align:center;}
+.cp-status-done{font-size:13px;font-weight:700;color:var(--accent-teal);text-align:center;padding:10px 0;}
+
+.next-event-card{padding:14px 16px;border-radius:18px;display:flex;flex-direction:column;gap:7px;}
+.ne-header{display:flex;align-items:center;gap:6px;}
+.ne-label{font-size:10px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:var(--text-muted);}
+.ne-title{font-size:13px;font-weight:700;color:var(--text-primary);line-height:1.3;}
+.ne-countdown{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);letter-spacing:-0.5px;}
+.ne-date{font-size:11px;color:var(--text-muted);}
+.ne-empty{font-size:12px;color:var(--text-muted);font-style:italic;}
+
+/* ===== TIMER LIST ===== */
+.timers-section{padding:18px 20px;display:flex;flex-direction:column;gap:11px;}
+.timers-section-header{display:flex;align-items:center;justify-content:space-between;}
+.search-bar{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.55);border-radius:var(--r-pill);padding:7px 12px;}
+:root[data-theme="dark"] .search-bar{background:rgba(0,0,0,0.2);border-color:rgba(255,255,255,0.1);}
+.search-bar input{flex:1;border:none;background:transparent;font-family:var(--font);font-size:12px;color:var(--text-primary);outline:none;min-width:0;}
+.search-bar input::placeholder{color:var(--text-muted);}
+.custom-list{display:flex;flex-direction:column;gap:5px;overflow-y:auto;max-height:200px;padding-right:2px;}
+.custom-list::-webkit-scrollbar{width:3px;}
+.custom-list::-webkit-scrollbar-thumb{background:rgba(79,130,160,0.3);border-radius:3px;}
+.custom-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.45);border-radius:12px;padding:7px 10px;transition:background 0.12s;}
+.custom-item:hover{background:rgba(255,255,255,0.55);}
+:root[data-theme="dark"] .custom-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+.ci-dot{width:7px;height:7px;border-radius:50%;background:var(--dot-custom);flex-shrink:0;}
+.ci-info{flex:1;min-width:0;}
+.ci-name{font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ci-date{font-size:10px;color:var(--text-muted);white-space:nowrap;}
+.ci-remain{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-secondary);white-space:nowrap;}
+.ci-actions{display:flex;gap:3px;flex-shrink:0;}
+.ci-btn{width:22px;height:22px;border-radius:50%;border:1px solid rgba(79,130,160,0.25);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
+.ci-btn.edit{color:var(--accent);}
+.ci-btn.del{border-color:rgba(194,107,130,0.3);color:var(--accent-rose);}
+.ci-btn.edit:hover{background:rgba(79,130,160,0.14);}
+.ci-btn.del:hover{background:rgba(194,107,130,0.1);}
+.list-empty{text-align:center;padding:16px 0;color:var(--text-muted);font-size:12px;font-style:italic;}
+
+/* ===== CALENDAR CARD ===== */
+.cal-card{padding:20px;display:flex;flex-direction:column;gap:12px;}
+.cal-card-header{display:flex;align-items:center;justify-content:space-between;}
+.cal-card-title{font-size:13px;font-weight:700;color:var(--text-on-dark);display:flex;align-items:center;gap:6px;}
+.tab-icon-switcher{display:flex;gap:4px;}
+.tab-icon-btn{width:28px;height:28px;border-radius:9px;border:1px solid var(--glass-dark-border);background:rgba(255,255,255,0.07);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
+.tab-icon-btn.active{background:rgba(255,255,255,0.18);color:var(--text-on-dark);border-color:rgba(255,255,255,0.28);}
+.tab-icon-btn:hover:not(.active){background:rgba(255,255,255,0.1);}
+.cal-tab,.add-tab{display:flex;flex-direction:column;gap:10px;flex:1;}
+.cal-tab.hidden,.add-tab.hidden{display:none;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;}
+.cal-month-label{font-size:12.5px;font-weight:700;color:var(--text-on-dark);}
+.cal-nav-btn{width:24px;height:24px;border-radius:var(--r-pill);border:1px solid var(--glass-dark-border);background:rgba(255,255,255,0.07);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
+.cal-nav-btn:hover{background:rgba(255,255,255,0.16);color:white;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;padding:2px 0;}
+.cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;border-radius:9px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-on-dark-muted);cursor:pointer;transition:all 0.12s;min-height:26px;}
+.cal-day:hover:not(.other-month){background:rgba(255,255,255,0.1);color:white;}
+.cal-day.today{background:rgba(255,255,255,0.18);color:white;font-weight:700;border:1px solid rgba(255,255,255,0.28);}
+.cal-day.other-month{opacity:0.25;pointer-events:none;}
+.cal-day.is-libur{color:var(--dot-libur);font-weight:700;}
+.cal-day.is-peringatan{color:var(--dot-peringatan);}
+.cal-day.has-ramadan{color:var(--dot-ramadan);font-weight:700;}
+.cal-day.has-syawal{color:var(--dot-syawal);font-weight:700;}
+.cal-day.today.is-libur,.cal-day.today.is-peringatan,.cal-day.today.has-ramadan,.cal-day.today.has-syawal{color:white;}
+.cal-dots{display:flex;gap:2px;position:absolute;bottom:2px;}
+.cal-dot{width:3.5px;height:3.5px;border-radius:50%;}
+.cal-detail{background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.13);border-radius:11px;padding:9px 11px;min-height:34px;display:flex;flex-direction:column;gap:3px;}
+.cal-detail-title{font-size:10.5px;font-weight:600;color:var(--text-on-dark-muted);letter-spacing:0.3px;}
+.cal-detail-ev{font-size:11px;font-weight:500;color:var(--text-on-dark);display:flex;align-items:center;gap:5px;}
+.cev-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.cev-use-btn{margin-left:auto;font-size:9px;color:var(--accent-light);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;text-decoration:underline;}
+.cal-legend{display:flex;flex-wrap:wrap;gap:8px;padding:1px 0;}
+.cal-leg-item{display:flex;align-items:center;gap:3.5px;font-size:9px;color:var(--text-on-dark-muted);}
+.cal-leg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* Quick Add */
+.form-mode-switcher{display:flex;background:rgba(0,0,0,0.2);border-radius:var(--r-pill);padding:3px;gap:2px;}
+.form-mode-btn{flex:1;padding:5px 8px;border:none;border-radius:var(--r-pill);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;color:var(--text-on-dark-muted);background:transparent;transition:all 0.2s;white-space:nowrap;}
+.form-mode-btn.active{background:rgba(255,255,255,0.17);color:var(--text-on-dark);}
+.form-fields{display:flex;flex-direction:column;gap:7px;}
+.form-field-label{font-size:9.5px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:3px;display:block;}
+.form-input{width:100%;padding:8px 11px;border-radius:11px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.09);color:var(--text-on-dark);font-family:var(--font);font-size:12px;outline:none;transition:border-color 0.15s;box-sizing:border-box;}
+.form-input::placeholder{color:rgba(237,242,247,0.35);}
+.form-input:focus{border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.13);}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.btn-create{width:100%;padding:9px 18px;border-radius:var(--r-pill);border:1px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.18);color:var(--text-on-dark);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.15s;}
+.btn-create:hover{background:rgba(255,255,255,0.28);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+
+/* ===== MODALS ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.42);backdrop-filter:blur(5px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:var(--glass-light);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--glass-border);border-radius:var(--r-card);padding:24px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 40px rgba(0,0,0,0.18);}
+.modal-title{font-size:16px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px;}
+.modal-label{font-size:11px;font-weight:700;color:var(--text-secondary);letter-spacing:0.4px;display:block;margin-bottom:5px;text-transform:uppercase;}
+.modal-input{width:100%;padding:9px 12px;border-radius:12px;border:1px solid rgba(79,130,160,0.28);background:rgba(255,255,255,0.5);color:var(--text-primary);font-family:var(--font);font-size:13px;outline:none;box-sizing:border-box;transition:border-color 0.15s;}
+.modal-input:focus{border-color:var(--accent);background:rgba(255,255,255,0.65);}
+.modal-actions{display:flex;gap:8px;}
+.modal-btn{flex:1;padding:10px;border-radius:var(--r-pill);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(79,130,160,0.28);background:rgba(79,130,160,0.08);color:var(--accent);transition:all 0.15s;letter-spacing:0.2px;}
+.modal-btn.primary{background:var(--accent);color:white;border-color:var(--accent);}
+.modal-btn:hover{opacity:0.88;}
+.modal-divider{height:1px;background:rgba(79,130,160,0.15);margin:2px 0;}
+.modal-subtitle{font-size:12px;font-weight:600;color:var(--text-secondary);}
+
+/* Work schedule modal */
+.wday-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.wday-btn{padding:6px 2px;border-radius:9px;border:1px solid rgba(79,130,160,0.22);background:transparent;font-family:var(--font);font-size:10px;font-weight:700;cursor:pointer;color:var(--text-secondary);text-align:center;transition:all 0.15s;}
+.wday-btn.working{background:var(--status-working-bg);border-color:var(--status-working-b);color:var(--status-working-c);}
+.wday-btn.wfh{background:var(--status-wfh-bg);border-color:var(--status-wfh-b);color:var(--status-wfh-c);}
+.wday-btn.libur{background:var(--status-libur-bg);border-color:var(--status-libur-b);color:var(--status-libur-c);}
+.wday-btn.off{background:rgba(0,0,0,0.05);color:var(--text-muted);border-color:rgba(0,0,0,0.1);}
+.wday-label{font-size:9px;text-align:center;color:var(--text-muted);margin-top:2px;}
+.wday-wrap{display:flex;flex-direction:column;gap:1px;}
+.override-row{display:flex;align-items:center;gap:8px;}
+.override-status-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.ov-btn{padding:5px 11px;border-radius:var(--r-pill);border:1px solid;font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.ov-btn.working{border-color:var(--status-working-b);color:var(--status-working-c);background:var(--status-working-bg);}
+.ov-btn.wfh{border-color:var(--status-wfh-b);color:var(--status-wfh-c);background:var(--status-wfh-bg);}
+.ov-btn.libur{border-color:var(--status-libur-b);color:var(--status-libur-c);background:var(--status-libur-bg);}
+.ov-btn.off{border-color:rgba(110,143,168,0.25);color:var(--text-muted);background:transparent;}
+.ov-btn.active{box-shadow:0 0 0 2px currentColor;}
+.modal-hint{font-size:10.5px;color:var(--text-muted);}
+
+/* Reset bar */
+.reset-bar{display:flex;align-items:center;justify-content:flex-end;padding:0 4px;}
+.btn-reset{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
+.btn-reset:hover{color:var(--accent-rose);background:rgba(194,107,130,0.1);}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:860px){
+  .main-grid{grid-template-columns:1fr;}
+  .col-left,.col-right{grid-column:1;}
+}
+@media(max-width:540px){
+  .digit-num{font-size:40px;} .digit-sep{font-size:28px;padding-bottom:14px;}
+  .metrics-strip{grid-template-columns:1fr 1fr;}
+}
+@media(prefers-reduced-motion:no-preference){.digit-num{transition:transform 0.1s var(--ease);}}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+</style>
+
+<!-- PAGE -->
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <header class="glass-light header-bar">
+    <div class="header-brand">
+      <div class="app-name">
+        <span class="ic" id="ic-app"></span>
+        Hitung<span style="color:var(--accent)">Mundur</span>
+      </div>
+      <div class="date-line" id="hdr-date">Memuat…</div>
+    </div>
+    <div class="header-right">
+      <div class="clock-block">
+        <div class="clock-display" id="hdr-clock">00:00:00</div>
+        <div class="clock-tz">WIB · UTC+7</div>
+      </div>
+      <div class="status-badge working" id="status-badge" onclick="openWorkScheduleModal()" title="Klik untuk atur jadwal kerja">
+        <span class="ic" id="ic-status"></span>
+        <span id="status-text">Working Hours</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+
+      <!-- Section: Countdown Utama -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-1"></span> Countdown Utama
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="glass-light hero-card">
+        <div class="hero-switcher">
+          <button id="sw-ramadan" class="active" onclick="setHeroMode('ramadan')">1 Ramadhan 1448H</button>
+          <button id="sw-syawal" onclick="setHeroMode('syawal')">1 Syawal 1448H</button>
+        </div>
+        <div class="hero-title-row">
+          <div>
+            <h2 id="hero-title">Menuju 1 Ramadhan 1448H</h2>
+            <div class="hero-target-date">
+              <span style="color:var(--text-muted)">Target:</span>
+              <span class="target-date-pill" id="hero-date-pill">8 Feb 2027</span>
+              <div class="day-adjust-btns">
+                <button onclick="adjustDay(-1)">−</button>
+                <span id="adj-label">±0 hr</span>
+                <button onclick="adjustDay(+1)">+</button>
+              </div>
+            </div>
+          </div>
+          <button class="add-timer-btn" onclick="openAddModal()" title="Tambah Timer" id="btn-add-hero">
+            <span class="ic" id="ic-add-hero"></span>
+          </button>
+        </div>
+        <div class="countdown-digits">
+          <div class="digit-block"><div class="digit-num" id="cd-days">000</div><div class="digit-label">Hari</div></div>
+          <div class="digit-sep">:</div>
+          <div class="digit-block"><div class="digit-num" id="cd-hours">00</div><div class="digit-label">Jam</div></div>
+          <div class="digit-sep">:</div>
+          <div class="digit-block"><div class="digit-num" id="cd-mins">00</div><div class="digit-label">Menit</div></div>
+          <div class="digit-sep">:</div>
+          <div class="digit-block"><div class="digit-num" id="cd-secs">00</div><div class="digit-label">Detik</div></div>
+        </div>
+        <div class="progress-section">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+            <span style="font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:0.6px;text-transform:uppercase;">Progres Perjalanan</span>
+          </div>
+          <div class="progress-row">
+            <span class="progress-label"><span class="ic" id="ic-moon" style="color:var(--dot-ramadan)"></span>Ramadhan</span>
+            <div class="progress-track"><div class="progress-fill ramadan" id="prog-ramadan" style="width:0%"></div></div>
+            <span class="progress-pct" id="prog-ramadan-pct">0%</span>
+          </div>
+          <div class="progress-row">
+            <span class="progress-label"><span class="ic" id="ic-star" style="color:var(--dot-syawal)"></span>Syawal</span>
+            <div class="progress-track"><div class="progress-fill syawal" id="prog-syawal" style="width:0%"></div></div>
+            <span class="progress-pct" id="prog-syawal-pct">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Jam Pulang & Event -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-2"></span> Harian
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="bottom-left-row">
+        <div class="glass-dark card-pulang">
+          <div class="cp-header">
+            <span class="cp-label-top">Hitung Mundur</span>
+            <button class="cp-edit-btn" onclick="openEditPulang()" title="Atur jam kerja" id="btn-edit-pulang">
+              <span class="ic" id="ic-pencil"></span>
+            </button>
+          </div>
+          <div class="cp-title"><span class="ic" id="ic-home"></span> Jam Pulang</div>
+          <div id="pulang-digits">
+            <div class="cp-digits">
+              <span class="cp-num">00</span><span class="cp-sep">:</span>
+              <span class="cp-num">00</span><span class="cp-sep">:</span>
+              <span class="cp-num">00</span>
+            </div>
+            <div class="cp-unit-row">
+              <span class="cp-unit">Jam</span><span class="cp-unit">Menit</span><span class="cp-unit">Detik</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-light next-event-card">
+          <div class="ne-header">
+            <span class="ic" id="ic-pin"></span>
+            <span class="ne-label">Event Terdekat</span>
+          </div>
+          <div id="ne-content"><div class="ne-empty">Belum ada event mendatang</div></div>
+        </div>
+      </div>
+
+      <!-- Section: Custom Timers -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-3"></span> Custom Timers
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="glass-light timers-section">
+        <div class="timers-section-header">
+          <div class="search-bar" style="flex:1;">
+            <span class="ic" id="ic-search" style="color:var(--text-muted)"></span>
+            <input type="search" id="search-input" placeholder="Cari timer…" oninput="filterTimers()">
+          </div>
+        </div>
+        <div class="custom-list" id="custom-list">
+          <div class="list-empty">Belum ada custom timer. Klik + untuk tambah.</div>
+        </div>
+      </div>
+
+    </div><!-- /col-left -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+
+      <!-- Section: Metrik -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-4"></span> Ringkasan
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="glass-light metrics-strip">
+        <div class="metric-tile">
+          <div class="m-val" id="m-hari-ramadan">—</div>
+          <div class="m-label"><span class="m-dot" style="background:var(--dot-ramadan)"></span>Hari ke Ramadhan</div>
+        </div>
+        <div class="metric-tile">
+          <div class="m-val" id="m-hari-syawal">—</div>
+          <div class="m-label"><span class="m-dot" style="background:var(--dot-syawal)"></span>Hari ke Syawal</div>
+        </div>
+        <div class="metric-tile">
+          <div class="m-val" id="m-active">0</div>
+          <div class="m-label"><span class="m-dot" style="background:var(--dot-custom)"></span>Event Aktif</div>
+        </div>
+        <div class="metric-tile">
+          <div class="m-val" id="m-target">18:00</div>
+          <div class="m-label"><span class="ic" id="ic-clock-m" style="color:var(--text-muted)"></span>Target Harian</div>
+        </div>
+      </div>
+
+      <!-- Section: Shift Kerja -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-5"></span> Shift Kerja
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="glass-light gauge-card">
+        <div class="gauge-header">
+          <span class="gauge-title">Progres Shift</span>
+          <button class="gauge-edit-btn" onclick="openEditPulang()">
+            <span class="ic" id="ic-gauge-edit"></span> Atur Jam
+          </button>
+        </div>
+        <div class="gauge-body">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="gauge-svg-wrap">
+              <svg viewBox="0 0 150 84" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#4f82a0"/>
+                    <stop offset="100%" style="stop-color:#3ea494"/>
+                  </linearGradient>
+                </defs>
+                <path id="gauge-track" d="" fill="none" stroke="rgba(79,130,160,0.15)" stroke-width="10" stroke-linecap="round"/>
+                <path id="gauge-fill"  d="" fill="none" stroke="url(#gaugeGrad)"       stroke-width="10" stroke-linecap="round"/>
+                <g id="gauge-ticks"></g>
+              </svg>
+              <div class="gauge-center-text">
+                <div class="gauge-pct-num" id="gauge-pct-num">0%</div>
+                <div class="gauge-pct-label">selesai</div>
+              </div>
+            </div>
+            <div class="gauge-time-row">
+              <span id="gauge-label-start">08:00</span>
+              <span id="gauge-label-end">18:00</span>
+            </div>
+          </div>
+          <div class="gauge-info">
+            <div class="gauge-stat">Mulai: <strong id="gi-start">08:00</strong></div>
+            <div class="gauge-stat">Selesai: <strong id="gi-end">18:00</strong></div>
+            <div class="gauge-stat">Pulang: <strong id="gi-pulang">18:00</strong></div>
+            <div class="gauge-stat" id="gi-remaining-row">Sisa: <strong id="gi-remaining">—</strong></div>
+          </div>
+        </div>
+        <!-- Hidden sync inputs -->
+        <div class="gauge-hidden">
+          <input type="time" id="gauge-start" value="08:00" onchange="saveShiftSettings()">
+          <input type="time" id="gauge-end"   value="18:00" onchange="saveShiftSettings()">
+        </div>
+      </div>
+
+      <!-- Section: Kalender -->
+      <div class="section-label">
+        <span class="ic" id="ic-sl-6"></span> Kalender
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="glass-dark-2 cal-card">
+        <div class="cal-card-header">
+          <div class="cal-card-title" id="cal-card-title">
+            <span class="ic" id="ic-cal-title"></span> Kalender
+          </div>
+          <div class="tab-icon-switcher">
+            <button class="tab-icon-btn active" id="tab-cal-btn" onclick="switchCalTab('cal')" title="Kalender">
+              <span class="ic" id="ic-tab-cal"></span>
+            </button>
+            <button class="tab-icon-btn" id="tab-add-btn" onclick="switchCalTab('add')" title="Tambah Timer">
+              <span class="ic" id="ic-tab-add"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="cal-tab" id="cal-tab">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calNav(-1)" id="btn-cal-prev"><span class="ic" id="ic-cal-prev"></span></button>
+            <span class="cal-month-label" id="cal-month-label">November 2026</span>
+            <button class="cal-nav-btn" onclick="calNav(+1)" id="btn-cal-next"><span class="ic" id="ic-cal-next"></span></button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-detail" id="cal-detail">
+            <div class="cal-detail-title">Klik tanggal untuk lihat detail</div>
+          </div>
+          <div class="cal-legend">
+            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-libur)"></div>Libur nasional</div>
+            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-peringatan)"></div>Hari peringatan</div>
+            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-ramadan)"></div>Ramadhan</div>
+            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-syawal)"></div>Syawal</div>
+            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-custom)"></div>Custom</div>
+          </div>
+        </div>
+
+        <div class="add-tab hidden" id="add-tab">
+          <div class="form-mode-switcher">
+            <button class="form-mode-btn active" id="fm-specific" onclick="setFormMode('specific')">Tanggal &amp; Jam</button>
+            <button class="form-mode-btn" id="fm-daily" onclick="setFormMode('daily')">Harian / Berulang</button>
+          </div>
+          <div class="form-fields">
+            <div>
+              <label class="form-field-label">Nama Event</label>
+              <input class="form-input" id="f-name" type="text" placeholder="Contoh: Deadline Laporan…">
+            </div>
+            <div id="f-specific-fields">
+              <div class="form-row-2">
+                <div><label class="form-field-label">Tanggal</label><input class="form-input" id="f-date" type="date"></div>
+                <div><label class="form-field-label">Jam</label><input class="form-input" id="f-time" type="time" value="08:00"></div>
+              </div>
+            </div>
+            <div id="f-daily-fields" class="hidden">
+              <label class="form-field-label">Jam Setiap Hari</label>
+              <input class="form-input" id="f-daily-time" type="time" value="08:00">
+            </div>
+            <button class="btn-create" onclick="createTimer()">Buat Timer →</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /col-right -->
+  </div><!-- /main-grid -->
+
+  <div class="reset-bar">
+    <button class="btn-reset" onclick="resetAll()">
+      <span class="ic" id="ic-reset"></span> Reset Default
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: Working Hours -->
+<div class="modal-overlay hidden" id="modal-pulang">
+  <div class="modal-box">
+    <div class="modal-title"><span class="ic" id="ic-m-pulang"></span> Atur Jam Kerja</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div>
+        <label class="modal-label">Mulai Shift</label>
+        <input class="modal-input" id="modal-shift-start" type="time" value="08:00">
+      </div>
+      <div>
+        <label class="modal-label">Selesai Shift</label>
+        <input class="modal-input" id="modal-shift-end" type="time" value="18:00">
+      </div>
+    </div>
+    <div>
+      <label class="modal-label">Jam Pulang / Target Harian</label>
+      <input class="modal-input" id="modal-pulang-time" type="time" value="18:00">
+      <div class="modal-hint" style="margin-top:5px;">Hitung mundur "Jam Pulang" dihitung dari jam ini. Bisa beda dari selesai shift.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('modal-pulang')">Batal</button>
+      <button class="modal-btn primary" onclick="savePulang()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Work Schedule (jadwal mingguan + override) -->
+<div class="modal-overlay hidden" id="modal-schedule">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-title"><span class="ic" id="ic-m-sched"></span> Jadwal Kerja Mingguan</div>
+
+    <div>
+      <label class="modal-label">Default per Hari</label>
+      <div class="modal-hint" style="margin-bottom:8px;">Klik hari untuk putar status: Kerja → WFH → Libur → Off</div>
+      <div class="wday-grid" id="wday-grid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <div>
+      <label class="modal-label">Override Hari Ini</label>
+      <div class="modal-hint" style="margin-bottom:8px;" id="override-date-label">Hari ini: —</div>
+      <div class="override-status-btns">
+        <button class="ov-btn working" id="ov-working" onclick="setTodayOverride('working')">Kerja</button>
+        <button class="ov-btn wfh"     id="ov-wfh"     onclick="setTodayOverride('wfh')">WFH</button>
+        <button class="ov-btn libur"   id="ov-libur"   onclick="setTodayOverride('libur')">Libur</button>
+        <button class="ov-btn off"     id="ov-off"     onclick="setTodayOverride(null)">Pakai Default</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('modal-schedule')">Tutup</button>
+      <button class="modal-btn primary" onclick="saveSchedule()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add / Edit Timer -->
+<div class="modal-overlay hidden" id="modal-timer">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-timer-title"><span class="ic" id="ic-m-timer"></span> Tambah Timer</div>
+    <div>
+      <label class="modal-label">Nama Event</label>
+      <input class="modal-input" id="mt-name" type="text" placeholder="Nama event…">
+    </div>
+    <div id="mt-specific-wrap">
+      <label class="modal-label">Tanggal &amp; Jam Target</label>
+      <input class="modal-input" id="mt-datetime" type="datetime-local">
+    </div>
+    <div id="mt-daily-wrap" class="hidden">
+      <label class="modal-label">Jam Setiap Hari</label>
+      <input class="modal-input" id="mt-daily-time" type="time" value="08:00">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('modal-timer')">Batal</button>
+      <button class="modal-btn primary" id="mt-save-btn" onclick="saveTimer()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ICONS
+// ============================================================
+function mkIcon(name,size=14){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width',size);svg.setAttribute('height',size);
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('stroke','currentColor');
+  svg.setAttribute('fill','none');svg.setAttribute('stroke-width','2');
+  svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+  const paths={
+    timer:['M10 2h4','M12 14l4-4','M4.6 11a8 8 0 1 0 1.1-3.5'],
+    clock:['M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2','M12 6v6l4 2'],
+    briefcase:['M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2','M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2'],
+    laptop:['M4 16l-2 2h20l-2-2','M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10H4z'],
+    'umbrella-off':['M12 2a7 7 0 0 1 7 7','M4.3 7a8 8 0 0 0 11.4 7.5','M12 12v6a2 2 0 0 0 4 0','M2 2l20 20'],
+    moon:['M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z'],
+    star:['M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z'],
+    home:['M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z','M9 22V12h6v10'],
+    pencil:['M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7','M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z'],
+    pin:['M12 17v5','M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z'],
+    search:['M21 21l-4.35-4.35','M11 5a6 6 0 1 1 0 12A6 6 0 0 1 11 5'],
+    calendar:['M8 2v4','M16 2v4','M3 10h18','M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z'],
+    plus:['M12 5v14','M5 12h14'],
+    'chevron-left':['M15 18l-6-6 6-6'],
+    'chevron-right':['M9 18l6-6-6-6'],
+    edit:['M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7','M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z'],
+    trash:['M3 6h18','M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6','M10 11v6','M14 11v6','M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'],
+    'rotate-ccw':['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8','M3 3v5h5'],
+    settings:['M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z','M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'],
+    'bar-chart':['M12 20V10','M18 20V4','M6 20v-4'],
+    layers:['M12 2l8 4-8 4-8-4z','M4 12l8 4 8-4','M4 16l8 4 8-4'],
+  };
+  const d=paths[name]||paths['clock'];
+  d.forEach(p=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',p);svg.appendChild(path);});
+  return svg;
+}
+function setIcon(el,name,size=14){if(!el)return;el.innerHTML='';el.appendChild(mkIcon(name,size));}
+
+function initIcons(){
+  setIcon(document.getElementById('ic-app'),'timer',16);
+  setIcon(document.getElementById('ic-status'),'briefcase',12);
+  setIcon(document.getElementById('ic-add-hero'),'plus',14);
+  setIcon(document.getElementById('ic-moon'),'moon',12);
+  setIcon(document.getElementById('ic-star'),'star',12);
+  setIcon(document.getElementById('ic-clock-m'),'clock',11);
+  setIcon(document.getElementById('ic-home'),'home',14);
+  setIcon(document.getElementById('ic-pencil'),'pencil',11);
+  setIcon(document.getElementById('ic-pin'),'pin',11);
+  setIcon(document.getElementById('ic-search'),'search',13);
+  setIcon(document.getElementById('ic-cal-title'),'calendar',13);
+  setIcon(document.getElementById('ic-tab-cal'),'calendar',14);
+  setIcon(document.getElementById('ic-tab-add'),'plus',14);
+  setIcon(document.getElementById('ic-cal-prev'),'chevron-left',12);
+  setIcon(document.getElementById('ic-cal-next'),'chevron-right',12);
+  setIcon(document.getElementById('ic-reset'),'rotate-ccw',11);
+  setIcon(document.getElementById('ic-gauge-edit'),'pencil',11);
+  setIcon(document.getElementById('ic-m-pulang'),'clock',15);
+  setIcon(document.getElementById('ic-m-sched'),'settings',15);
+  setIcon(document.getElementById('ic-m-timer'),'timer',15);
+  setIcon(document.getElementById('ic-sl-1'),'timer',11);
+  setIcon(document.getElementById('ic-sl-2'),'clock',11);
+  setIcon(document.getElementById('ic-sl-3'),'layers',11);
+  setIcon(document.getElementById('ic-sl-4'),'bar-chart',11);
+  setIcon(document.getElementById('ic-sl-5'),'briefcase',11);
+  setIcon(document.getElementById('ic-sl-6'),'calendar',11);
+}
+
+// ============================================================
+// LIBUR & PERINGATAN
+// ============================================================
+const LIBUR_NASIONAL={
+  '2026-01-01':'Tahun Baru Masehi','2026-01-16':'Isra Miraj 1447H','2026-02-17':'Tahun Baru Imlek 2577',
+  '2026-03-19':'Hari Raya Nyepi','2026-03-21':'Idul Fitri 1447H','2026-03-22':'Idul Fitri 1447H H+1',
+  '2026-04-03':'Wafat Yesus Kristus','2026-04-05':'Paskah','2026-05-01':'Hari Buruh Internasional',
+  '2026-05-14':'Kenaikan Yesus Kristus','2026-05-27':'Idul Adha 1447H','2026-05-31':'Hari Raya Waisak',
+  '2026-06-01':'Hari Lahir Pancasila','2026-06-16':'Tahun Baru Islam 1448H',
+  '2026-08-17':'HUT Kemerdekaan RI','2026-08-25':'Maulid Nabi Muhammad SAW','2026-12-25':'Hari Raya Natal',
+  '2027-01-01':'Tahun Baru Masehi','2027-01-05':'Isra Miraj 1448H','2027-02-06':'Tahun Baru Imlek 2578',
+  '2027-03-08':'Hari Raya Nyepi','2027-03-10':'Idul Fitri 1448H (est.)','2027-03-11':'Idul Fitri 1448H H+1 (est.)',
+  '2027-03-26':'Wafat Yesus Kristus','2027-03-28':'Paskah','2027-05-01':'Hari Buruh Internasional',
+  '2027-05-06':'Kenaikan Yesus Kristus','2027-05-17':'Idul Adha 1448H (est.)','2027-05-20':'Hari Raya Waisak',
+  '2027-06-01':'Hari Lahir Pancasila','2027-06-06':'Tahun Baru Islam 1449H',
+  '2027-08-15':'Maulid Nabi Muhammad SAW','2027-08-17':'HUT Kemerdekaan RI',
+  '2027-12-25':'Hari Raya Natal','2027-12-26':'Isra Miraj 1449H',
+};
+const HARI_PERINGATAN={
+  '2026-01-25':'Hari Gizi Nasional','2026-02-09':'Hari Pers Nasional','2026-02-22':'Hari Ibu Kandung Nasional',
+  '2026-03-01':'Hari Kehakiman Nasional','2026-03-08':'Hari Perempuan Internasional',
+  '2026-04-02':'Hari Peduli Autisme Sedunia','2026-04-21':'Hari Kartini','2026-04-22':'Hari Bumi',
+  '2026-05-02':'Hari Pendidikan Nasional','2026-05-20':'Hari Kebangkitan Nasional',
+  '2026-06-05':'Hari Lingkungan Hidup Sedunia','2026-07-05':'Hari Bank Indonesia',
+  '2026-07-23':'Hari Anak Nasional','2026-08-10':'Hari Veteran Nasional',
+  '2026-09-30':'Hari Kesaktian Pancasila','2026-10-01':'Hari TNI','2026-10-05':'Hari Guru Sedunia',
+  '2026-10-28':'Hari Sumpah Pemuda','2026-11-10':'Hari Pahlawan','2026-11-25':'Hari Guru Nasional',
+  '2026-12-22':'Hari Ibu',
+  '2027-01-25':'Hari Gizi Nasional','2027-02-09':'Hari Pers Nasional','2027-03-01':'Hari Kehakiman Nasional',
+  '2027-03-08':'Hari Perempuan Internasional','2027-04-21':'Hari Kartini','2027-04-22':'Hari Bumi',
+  '2027-05-02':'Hari Pendidikan Nasional','2027-05-20':'Hari Kebangkitan Nasional',
+  '2027-06-05':'Hari Lingkungan Hidup Sedunia','2027-07-23':'Hari Anak Nasional',
+  '2027-09-30':'Hari Kesaktian Pancasila','2027-10-01':'Hari TNI','2027-10-05':'Hari Guru Sedunia',
+  '2027-10-28':'Hari Sumpah Pemuda','2027-11-10':'Hari Pahlawan','2027-11-25':'Hari Guru Nasional',
+  '2027-12-22':'Hari Ibu',
+};
+
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const LS={
+  get(k,def){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):def;}catch{return def;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+
+const DEFAULTS={
+  RAMADAN_BASE:new Date('2027-02-08T00:00:00+07:00').getTime(),
+  SYAWAL_BASE:new Date('2027-03-10T00:00:00+07:00').getTime(),
+  PULANG_TIME:'18:00',SHIFT_START:'08:00',SHIFT_END:'18:00',
+  JOURNEY_START:new Date('2026-01-01T00:00:00+07:00').getTime(),
+  // 0=Min,1=Sen,...,6=Sab  values: 'working'|'wfh'|'libur'|'off'
+  WEEKLY_SCHEDULE:{0:'off',1:'working',2:'working',3:'working',4:'working',5:'working',6:'off'},
+};
+
+let state={
+  heroMode:LS.get('heroMode','ramadan'),
+  ramadanAdj:LS.get('ramadanAdj',0),
+  syawalAdj:LS.get('syawalAdj',0),
+  pulangTime:LS.get('pulangTime',DEFAULTS.PULANG_TIME),
+  shiftStart:LS.get('shiftStart',DEFAULTS.SHIFT_START),
+  shiftEnd:LS.get('shiftEnd',DEFAULTS.SHIFT_END),
+  timers:LS.get('timers',[]),
+  weeklySchedule:LS.get('weeklySchedule',DEFAULTS.WEEKLY_SCHEDULE),
+  todayOverride:LS.get('todayOverride',null), // {date:'YYYY-MM-DD',status:'working'|'wfh'|'libur'|null}
+  calYear:null,calMonth:null,calSelected:null,
+  formMode:'specific',editingId:null,
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getTargetTs(mode){
+  const adj=(mode==='ramadan'?state.ramadanAdj:state.syawalAdj)*86400000;
+  return(mode==='ramadan'?DEFAULTS.RAMADAN_BASE:DEFAULTS.SYAWAL_BASE)+adj;
+}
+function msToHMS(ms){
+  if(ms<=0)return{d:0,h:0,m:0,s:0};
+  const s=Math.floor(ms/1000);
+  return{d:Math.floor(s/86400),h:Math.floor((s%86400)/3600),m:Math.floor((s%3600)/60),s:s%60};
+}
+function pad(n,w=2){return String(n).padStart(w,'0');}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function genId(){return Math.random().toString(36).slice(2,10);}
+function toDateKey(year,month,day){return`${year}-${pad(month+1)}-${pad(day)}`;}
+function todayKey(){const n=new Date();return toDateKey(n.getFullYear(),n.getMonth(),n.getDate());}
+
+function getWIBParts(now){
+  const fmt=(opts)=>new Intl.DateTimeFormat('en',{timeZone:'Asia/Jakarta',...opts}).format(now);
+  const hms=fmt({hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).split(':').map(Number);
+  return{h:hms[0],m:hms[1],s:hms[2],totalSecs:hms[0]*3600+hms[1]*60+hms[2]};
+}
+
+function toHijri(date){
+  const jd=Math.floor(date.getTime()/86400000+2440587.5);
+  const l=jd-1948440+10632,n=Math.floor((l-1)/10631),ll=l-10631*n+354;
+  const j=Math.floor((10985-ll)/5316)*Math.floor(50*ll/17719)+Math.floor(ll/5670)*Math.floor(43*ll/15238);
+  const lll=ll-Math.floor((30-j)/15)*Math.floor(17719*j/50)-Math.floor(j/16)*Math.floor(15238*j/43)+29;
+  const hm=Math.floor(24*lll/709),hd=lll-Math.floor(709*hm/24),hy=30*n+j-30;
+  const names=['Muharram','Safar','Rabiul Awal','Rabiul Akhir','Jumadil Awal','Jumadil Akhir','Rajab',"Sya'ban",'Ramadhan','Syawal','Dzulqa\'dah','Dzulhijjah'];
+  return`${hd} ${names[hm-1]||'?'} ${hy} H`;
+}
+function formatDateLong(ts){
+  const d=new Date(ts);
+  const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ============================================================
+// WORK STATUS
+// ============================================================
+function getTodayWorkStatus(){
+  const now=new Date();
+  const tk=todayKey();
+  // Check override (clear if stale)
+  if(state.todayOverride&&state.todayOverride.date===tk&&state.todayOverride.status!==null){
+    return state.todayOverride.status;
+  }
+  // Check libur nasional
+  if(LIBUR_NASIONAL[tk]) return 'libur';
+  // Weekly schedule (0=Sun)
+  const dow=now.getDay();
+  return state.weeklySchedule[dow]||'off';
+}
+
+function getStatusInfo(status,isWorkHours){
+  if(status==='libur') return{cls:'libur',text:'Hari Libur',icon:'umbrella-off'};
+  if(status==='wfh')   return{cls:'wfh',text:'WFH',icon:'laptop'};
+  if(status==='working'&&isWorkHours) return{cls:'working',text:'Working Hours',icon:'briefcase'};
+  if(status==='working'&&!isWorkHours) return{cls:'offduty',text:'Off Duty',icon:'clock'};
+  return{cls:'offduty',text:'Off Duty',icon:'clock'};
+}
+
+// ============================================================
+// HEADER
+// ============================================================
+function updateHeader(){
+  const now=new Date();
+  const wibFmt=new Intl.DateTimeFormat('en',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  document.getElementById('hdr-clock').textContent=wibFmt.format(now);
+  const dateFmt=new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('hdr-date').textContent=`${dateFmt.format(now)} · ${toHijri(now)}`;
+
+  const{h,m}=getWIBParts(now);
+  const cur=h*60+m;
+  const sp=state.shiftStart.split(':').map(Number),ep=state.shiftEnd.split(':').map(Number);
+  const isWorkHours=cur>=sp[0]*60+sp[1]&&cur<ep[0]*60+ep[1];
+  const ws=getTodayWorkStatus();
+  const info=getStatusInfo(ws,isWorkHours);
+  const badge=document.getElementById('status-badge');
+  badge.className='status-badge '+info.cls;
+  document.getElementById('status-text').textContent=info.text;
+  setIcon(document.getElementById('ic-status'),info.icon,12);
+}
+
+// ============================================================
+// HERO
+// ============================================================
+function setHeroMode(mode){
+  state.heroMode=mode;LS.set('heroMode',mode);
+  document.getElementById('sw-ramadan').classList.toggle('active',mode==='ramadan');
+  document.getElementById('sw-syawal').classList.toggle('active',mode==='syawal');
+  updateHeroUI();
+}
+function adjustDay(delta){
+  const key=state.heroMode==='ramadan'?'ramadanAdj':'syawalAdj';
+  state[key]+=delta;LS.set(key,state[key]);updateHeroUI();
+}
+function updateHeroUI(){
+  const isR=state.heroMode==='ramadan';
+  const adj=isR?state.ramadanAdj:state.syawalAdj;
+  document.getElementById('hero-title').textContent=isR?'Menuju 1 Ramadhan 1448H':'Menuju 1 Syawal 1448H';
+  document.getElementById('adj-label').textContent=adj===0?'±0 hr':adj>0?`+${adj} hr`:`${adj} hr`;
+  document.getElementById('hero-date-pill').textContent=formatDateLong(getTargetTs(state.heroMode));
+}
+function updateHeroCountdown(){
+  const{d,h,m,s}=msToHMS(getTargetTs(state.heroMode)-Date.now());
+  document.getElementById('cd-days').textContent=pad(d,3);
+  document.getElementById('cd-hours').textContent=pad(h);
+  document.getElementById('cd-mins').textContent=pad(m);
+  document.getElementById('cd-secs').textContent=pad(s);
+  updateProgressBars();updateMetrics();
+}
+
+// ============================================================
+// PROGRESS BARS
+// ============================================================
+function updateProgressBars(){
+  const now=Date.now(),start=DEFAULTS.JOURNEY_START;
+  const calc=t=>{const tot=t-start,el=now-start;if(tot<=0)return 100;return Math.min(100,Math.max(0,el/tot*100));};
+  const rP=calc(getTargetTs('ramadan')),sP=calc(getTargetTs('syawal'));
+  document.getElementById('prog-ramadan').style.width=rP.toFixed(1)+'%';
+  document.getElementById('prog-syawal').style.width=sP.toFixed(1)+'%';
+  document.getElementById('prog-ramadan-pct').textContent=rP.toFixed(0)+'%';
+  document.getElementById('prog-syawal-pct').textContent=sP.toFixed(0)+'%';
+}
+
+// ============================================================
+// METRICS
+// ============================================================
+function updateMetrics(){
+  const now=Date.now();
+  const dR=Math.max(0,Math.ceil((getTargetTs('ramadan')-now)/86400000));
+  const dS=Math.max(0,Math.ceil((getTargetTs('syawal')-now)/86400000));
+  document.getElementById('m-hari-ramadan').textContent=dR||'✓';
+  document.getElementById('m-hari-syawal').textContent=dS||'✓';
+  document.getElementById('m-active').textContent=state.timers.filter(t=>t.daily||(t.timestamp>now)).length;
+  document.getElementById('m-target').textContent=state.pulangTime;
+}
+
+// ============================================================
+// GAUGE — fixed arc math
+// ============================================================
+function polarXY(cx,cy,r,ang){
+  const rad=(ang)*Math.PI/180;
+  return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
+}
+// Semi-circle: left=180°, right=0°, draw clockwise from left to right
+// angle 0% → 180deg (left), 100% → 0deg (right)
+// We parameterize t ∈ [0,1], angle = 180 - t*180 = (1-t)*180
+function gaugeArc(cx,cy,r,t0,t1){
+  // angles in standard math coords (0=right, counter-clockwise positive)
+  // but SVG Y is flipped, so we use: x=cx+r*cos(a), y=cy-r*sin(a) for arc going left→right on top
+  if(t1<=t0) return '';
+  const a0=(1-t0)*Math.PI; // t=0 → π (left)
+  const a1=(1-t1)*Math.PI; // t=1 → 0 (right)
+  const x0=cx+r*Math.cos(a0), y0=cy-r*Math.sin(a0);
+  const x1=cx+r*Math.cos(a1), y1=cy-r*Math.sin(a1);
+  const large=( a0-a1 )>Math.PI?1:0;
+  return `M${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1}`;
+}
+
+function initGauge(){
+  const cx=75,cy=78,r=58;
+  document.getElementById('gauge-track').setAttribute('d',gaugeArc(cx,cy,r,0,1));
+  const g=document.getElementById('gauge-ticks');g.innerHTML='';
+  for(let i=0;i<=10;i++){
+    const t=i/10;
+    const ang=(1-t)*Math.PI;
+    const ox=cx+r*Math.cos(ang),oy=cy-r*Math.sin(ang);
+    const ix=cx+(r-6)*Math.cos(ang),iy=cy-(r-6)*Math.sin(ang);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',ix);line.setAttribute('y1',iy);
+    line.setAttribute('x2',ox);line.setAttribute('y2',oy);
+    line.setAttribute('stroke','rgba(79,130,160,0.25)');
+    line.setAttribute('stroke-width',i%5===0?'2':'1');
+    g.appendChild(line);
+  }
+}
+
+function updateGauge(){
+  const now=new Date();
+  const{totalSecs}=getWIBParts(now);
+  const sp=state.shiftStart.split(':').map(Number),ep=state.shiftEnd.split(':').map(Number);
+  const ss=sp[0]*3600+sp[1]*60,es=ep[0]*3600+ep[1]*60;
+  const duration=es>ss?es-ss:0;
+  let pct=duration>0?Math.min(1,Math.max(0,(totalSecs-ss)/duration)):0;
+  const cx=75,cy=78,r=58;
+  document.getElementById('gauge-fill').setAttribute('d',pct>0.001?gaugeArc(cx,cy,r,0,pct):'');
+  document.getElementById('gauge-pct-num').textContent=(pct*100).toFixed(0)+'%';
+  document.getElementById('gauge-label-start').textContent=state.shiftStart;
+  document.getElementById('gauge-label-end').textContent=state.shiftEnd;
+  document.getElementById('gi-start').textContent=state.shiftStart;
+  document.getElementById('gi-end').textContent=state.shiftEnd;
+  document.getElementById('gi-pulang').textContent=state.pulangTime;
+  // remaining shift time
+  const remSecs=Math.max(0,es-totalSecs);
+  if(remSecs>0){
+    const rh=Math.floor(remSecs/3600),rm=Math.floor((remSecs%3600)/60);
+    document.getElementById('gi-remaining').textContent=rh>0?`${rh}j ${pad(rm)}m`:`${rm} menit`;
+    document.getElementById('gi-remaining-row').style.display='';
+  } else {
+    document.getElementById('gi-remaining-row').style.display='none';
+  }
+}
+
+function saveShiftSettings(){
+  state.shiftStart=document.getElementById('gauge-start').value||state.shiftStart;
+  state.shiftEnd=document.getElementById('gauge-end').value||state.shiftEnd;
+  LS.set('shiftStart',state.shiftStart);LS.set('shiftEnd',state.shiftEnd);
+  updateGauge();updateMetrics();updateHeader();
+}
+
+// ============================================================
+// JAM PULANG
+// ============================================================
+function updatePulang(){
+  const now=new Date();
+  const{totalSecs}=getWIBParts(now);
+  const pp=state.pulangTime.split(':').map(Number);
+  let diff=(pp[0]*3600+pp[1]*60)-totalSecs;
+  if(diff<0)diff+=86400;
+  const ph=Math.floor(diff/3600),pm=Math.floor((diff%3600)/60),ps=diff%60;
+  const wrap=document.getElementById('pulang-digits');
+  if(diff<60){
+    wrap.innerHTML=`<div class="cp-status-done">Sudah Waktunya Pulang! 🎉</div>`;
+  }else{
+    wrap.innerHTML=`
+      <div class="cp-digits">
+        <span class="cp-num">${pad(ph)}</span><span class="cp-sep">:</span>
+        <span class="cp-num">${pad(pm)}</span><span class="cp-sep">:</span>
+        <span class="cp-num">${pad(ps)}</span>
+      </div>
+      <div class="cp-unit-row">
+        <span class="cp-unit">Jam</span><span class="cp-unit">Menit</span><span class="cp-unit">Detik</span>
+      </div>`;
+  }
+}
+
+function openEditPulang(){
+  document.getElementById('modal-shift-start').value=state.shiftStart;
+  document.getElementById('modal-shift-end').value=state.shiftEnd;
+  document.getElementById('modal-pulang-time').value=state.pulangTime;
+  document.getElementById('modal-pulang').classList.remove('hidden');
+}
+function savePulang(){
+  state.shiftStart=document.getElementById('modal-shift-start').value||state.shiftStart;
+  state.shiftEnd=document.getElementById('modal-shift-end').value||state.shiftEnd;
+  state.pulangTime=document.getElementById('modal-pulang-time').value||state.pulangTime;
+  LS.set('shiftStart',state.shiftStart);LS.set('shiftEnd',state.shiftEnd);LS.set('pulangTime',state.pulangTime);
+  document.getElementById('gauge-start').value=state.shiftStart;
+  document.getElementById('gauge-end').value=state.shiftEnd;
+  document.getElementById('m-target').textContent=state.pulangTime;
+  closeModal('modal-pulang');
+  updateGauge();updateMetrics();updatePulang();updateHeader();
+}
+
+// ============================================================
+// WORK SCHEDULE MODAL
+// ============================================================
+const WDAY_NAMES=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const STATUS_CYCLE=['working','wfh','libur','off'];
+
+function openWorkScheduleModal(){
+  renderWdayGrid();
+  // override UI
+  const tk=todayKey();
+  const now=new Date();
+  const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  document.getElementById('override-date-label').textContent=
+    `Hari ini: ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  // highlight active override
+  const ov=state.todayOverride;
+  const curOv=(ov&&ov.date===tk)?ov.status:null;
+  ['working','wfh','libur'].forEach(s=>{
+    document.getElementById('ov-'+s).classList.toggle('active',curOv===s);
+  });
+  document.getElementById('ov-off').classList.toggle('active',curOv===null&&!!ov&&ov.date===tk);
+  document.getElementById('modal-schedule').classList.remove('hidden');
+}
+
+function renderWdayGrid(){
+  const grid=document.getElementById('wday-grid');
+  grid.innerHTML='';
+  for(let d=0;d<7;d++){
+    const s=state.weeklySchedule[d]||'off';
+    const wrap=document.createElement('div');wrap.className='wday-wrap';
+    const btn=document.createElement('button');
+    btn.className=`wday-btn ${s}`;btn.textContent=WDAY_NAMES[d];
+    btn.dataset.dow=d;
+    btn.onclick=()=>{
+      const cur=state.weeklySchedule[d]||'off';
+      const idx=STATUS_CYCLE.indexOf(cur);
+      state.weeklySchedule[d]=STATUS_CYCLE[(idx+1)%STATUS_CYCLE.length];
+      renderWdayGrid();
+    };
+    const lbl=document.createElement('div');lbl.className='wday-label';
+    lbl.textContent=s==='working'?'Kerja':s==='wfh'?'WFH':s==='libur'?'Libur':'Off';
+    wrap.appendChild(btn);wrap.appendChild(lbl);
+    grid.appendChild(wrap);
+  }
+}
+
+function setTodayOverride(status){
+  const tk=todayKey();
+  state.todayOverride={date:tk,status};
+  LS.set('todayOverride',state.todayOverride);
+  ['working','wfh','libur'].forEach(s=>{
+    document.getElementById('ov-'+s).classList.toggle('active',status===s);
+  });
+  document.getElementById('ov-off').classList.toggle('active',status===null);
+  updateHeader();
+}
+
+function saveSchedule(){
+  LS.set('weeklySchedule',state.weeklySchedule);
+  closeModal('modal-schedule');
+  updateHeader();
+}
+
+// ============================================================
+// TIMERS CRUD
+// ============================================================
+let searchQuery='';
+function filterTimers(){searchQuery=document.getElementById('search-input').value.toLowerCase();renderTimerList();}
+
+function renderTimerList(){
+  const now=Date.now();
+  let list=state.timers;
+  if(searchQuery)list=list.filter(t=>t.name.toLowerCase().includes(searchQuery));
+  const el=document.getElementById('custom-list');
+  if(!list.length){el.innerHTML=`<div class="list-empty">${searchQuery?'Tidak ditemukan.':'Belum ada custom timer. Klik + untuk tambah.'}</div>`;return;}
+  const editSvg=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>`;
+  const trashSvg=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  el.innerHTML=list.map(t=>{
+    let remain='';
+    if(t.daily){
+      const{totalSecs}=getWIBParts(new Date());
+      const pp=t.dailyTime.split(':').map(Number);let d=(pp[0]*3600+pp[1]*60)-totalSecs;if(d<0)d+=86400;
+      remain=`${pad(Math.floor(d/3600))}:${pad(Math.floor((d%3600)/60))}:${pad(d%60)}`;
+    }else{
+      const ms=t.timestamp-now;
+      if(ms<=0)remain='✓ Selesai';
+      else{const{d,h,m,s}=msToHMS(ms);remain=d>0?`${d}h ${pad(h)}:${pad(m)}`:`${pad(h)}:${pad(m)}:${pad(s)}`;}
+    }
+    const dateStr=t.daily?`Setiap hari ${t.dailyTime}`:formatDateLong(t.timestamp);
+    return`<div class="custom-item" data-id="${t.id}">
+      <div class="ci-dot"></div>
+      <div class="ci-info">
+        <div class="ci-name">${escHtml(t.name)}</div>
+        <div class="ci-date">${dateStr}</div>
+      </div>
+      <div class="ci-remain">${remain}</div>
+      <div class="ci-actions">
+        <button class="ci-btn edit" onclick="openEditTimer('${t.id}')" title="Edit">${editSvg}</button>
+        <button class="ci-btn del"  onclick="deleteTimer('${t.id}')"   title="Hapus">${trashSvg}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateNextEvent(){
+  const now=Date.now();
+  const upcoming=state.timers.filter(t=>!t.daily&&t.timestamp>now).sort((a,b)=>a.timestamp-b.timestamp);
+  const el=document.getElementById('ne-content');
+  if(!upcoming.length){el.innerHTML='<div class="ne-empty">Belum ada event mendatang</div>';return;}
+  const nx=upcoming[0];const{d,h,m,s}=msToHMS(nx.timestamp-now);
+  const str=d>0?`${d} hari ${pad(h)}j ${pad(m)}m`:h>0?`${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(m)}:${pad(s)}`;
+  el.innerHTML=`<div class="ne-title">${escHtml(nx.name)}</div><div class="ne-countdown">${str}</div><div class="ne-date">${formatDateLong(nx.timestamp)}</div>`;
+}
+
+function deleteTimer(id){
+  if(!confirm('Hapus timer ini?'))return;
+  state.timers=state.timers.filter(t=>t.id!==id);
+  LS.set('timers',state.timers);
+  renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
+}
+
+function openAddModal(prefillDate){
+  state.editingId=null;
+  document.getElementById('modal-timer-title').innerHTML='';
+  document.getElementById('modal-timer-title').appendChild(mkIcon('timer',15));
+  document.getElementById('modal-timer-title').appendChild(document.createTextNode(' Tambah Timer'));
+  document.getElementById('mt-name').value='';
+  const now=new Date();const off=now.getTimezoneOffset();
+  const local=new Date(now.getTime()-off*60000);
+  document.getElementById('mt-datetime').value=prefillDate?prefillDate+'T08:00':local.toISOString().slice(0,16);
+  document.getElementById('mt-daily-time').value='08:00';
+  document.getElementById('mt-specific-wrap').classList.remove('hidden');
+  document.getElementById('mt-daily-wrap').classList.add('hidden');
+  document.getElementById('mt-save-btn').textContent='Tambah';
+  document.getElementById('modal-timer').classList.remove('hidden');
+}
+
+function openEditTimer(id){
+  const t=state.timers.find(x=>x.id===id);if(!t)return;
+  state.editingId=id;
+  document.getElementById('modal-timer-title').innerHTML='';
+  document.getElementById('modal-timer-title').appendChild(mkIcon('edit',15));
+  document.getElementById('modal-timer-title').appendChild(document.createTextNode(' Edit Timer'));
+  document.getElementById('mt-name').value=t.name;
+  if(t.daily){
+    document.getElementById('mt-specific-wrap').classList.add('hidden');
+    document.getElementById('mt-daily-wrap').classList.remove('hidden');
+    document.getElementById('mt-daily-time').value=t.dailyTime||'08:00';
+  }else{
+    document.getElementById('mt-specific-wrap').classList.remove('hidden');
+    document.getElementById('mt-daily-wrap').classList.add('hidden');
+    const d=new Date(t.timestamp);const off=d.getTimezoneOffset();
+    const local=new Date(d.getTime()-off*60000);
+    document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
+  }
+  document.getElementById('mt-save-btn').textContent='Simpan';
+  document.getElementById('modal-timer').classList.remove('hidden');
+}
+
+function saveTimer(){
+  const name=document.getElementById('mt-name').value.trim();
+  if(!name){document.getElementById('mt-name').focus();return;}
+  let entry;
+  const isDaily=!document.getElementById('mt-daily-wrap').classList.contains('hidden');
+  if(isDaily){
+    const dailyTime=document.getElementById('mt-daily-time').value||'08:00';
+    entry={name,daily:true,dailyTime,id:state.editingId||genId()};
+  }else{
+    const dt=document.getElementById('mt-datetime').value;
+    if(!dt){document.getElementById('mt-datetime').focus();return;}
+    const ts=new Date(dt).getTime();if(isNaN(ts))return;
+    entry={name,timestamp:ts,id:state.editingId||genId()};
+  }
+  if(state.editingId){
+    const idx=state.timers.findIndex(t=>t.id===state.editingId);if(idx>=0)state.timers[idx]=entry;
+  }else{
+    state.timers.push(entry);state.timers.sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
+  }
+  LS.set('timers',state.timers);
+  closeModal('modal-timer');
+  renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
+}
+
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.add('hidden');}));
+
+// ============================================================
+// QUICK ADD FORM
+// ============================================================
+function setFormMode(mode){
+  state.formMode=mode;
+  document.getElementById('fm-specific').classList.toggle('active',mode==='specific');
+  document.getElementById('fm-daily').classList.toggle('active',mode==='daily');
+  document.getElementById('f-specific-fields').classList.toggle('hidden',mode!=='specific');
+  document.getElementById('f-daily-fields').classList.toggle('hidden',mode!=='daily');
+}
+function createTimer(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){document.getElementById('f-name').focus();return;}
+  if(state.formMode==='specific'){
+    const date=document.getElementById('f-date').value,time=document.getElementById('f-time').value;
+    if(!date){document.getElementById('f-date').focus();return;}
+    const ts=new Date(`${date}T${time||'00:00'}+07:00`).getTime();if(isNaN(ts))return;
+    state.timers.push({name,timestamp:ts,id:genId()});
+  }else{
+    const dailyTime=document.getElementById('f-daily-time').value||'08:00';
+    state.timers.push({name,daily:true,dailyTime,id:genId()});
+  }
+  state.timers.sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
+  LS.set('timers',state.timers);
+  document.getElementById('f-name').value='';document.getElementById('f-date').value='';
+  renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
+  switchCalTab('cal');
+}
+function useDateInForm(dateStr){switchCalTab('add');document.getElementById('f-date').value=dateStr;setFormMode('specific');}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function switchCalTab(tab){
+  const isAdd=tab==='add';
+  document.getElementById('cal-tab').classList.toggle('hidden',isAdd);
+  document.getElementById('add-tab').classList.toggle('hidden',!isAdd);
+  document.getElementById('tab-cal-btn').classList.toggle('active',!isAdd);
+  document.getElementById('tab-add-btn').classList.toggle('active',isAdd);
+  const titleEl=document.getElementById('cal-card-title');
+  titleEl.innerHTML='';
+  const icon=mkIcon(isAdd?'plus':'calendar',13);
+  titleEl.appendChild(icon);
+  titleEl.appendChild(document.createTextNode(isAdd?' Tambah Timer':' Kalender'));
+}
+function calNav(d){
+  state.calMonth+=d;
+  if(state.calMonth<0){state.calMonth=11;state.calYear--;}
+  if(state.calMonth>11){state.calMonth=0;state.calYear++;}
+  renderCalendar();
+}
+function renderCalendar(){
+  const year=state.calYear,month=state.calMonth;
+  const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  document.getElementById('cal-month-label').textContent=`${months[month]} ${year}`;
+  const firstDay=new Date(year,month,1).getDay();
+  const dim=new Date(year,month+1,0).getDate();
+  const diprev=new Date(year,month,0).getDate();
+  const today=new Date();
+  const tD=today.getDate(),tM=today.getMonth(),tY=today.getFullYear();
+  const dayEvents={};
+  const addEv=(d,ev)=>{dayEvents[d]=dayEvents[d]||[];dayEvents[d].push(ev);};
+  const rDate=new Date(getTargetTs('ramadan')),sDate=new Date(getTargetTs('syawal'));
+  if(rDate.getFullYear()===year&&rDate.getMonth()===month)addEv(rDate.getDate(),{type:'ramadan',label:'1 Ramadhan 1448H',color:'var(--dot-ramadan)'});
+  if(sDate.getFullYear()===year&&sDate.getMonth()===month)addEv(sDate.getDate(),{type:'syawal',label:'1 Syawal 1448H',color:'var(--dot-syawal)'});
+  state.timers.forEach(t=>{if(!t.daily&&t.timestamp){const d=new Date(t.timestamp);if(d.getFullYear()===year&&d.getMonth()===month)addEv(d.getDate(),{type:'custom',label:t.name,color:'var(--dot-custom)'}); }});
+  for(let d=1;d<=dim;d++){
+    const key=toDateKey(year,month,d);
+    if(LIBUR_NASIONAL[key])  addEv(d,{type:'libur',     label:LIBUR_NASIONAL[key],  color:'var(--dot-libur)'});
+    if(HARI_PERINGATAN[key]) addEv(d,{type:'peringatan',label:HARI_PERINGATAN[key], color:'var(--dot-peringatan)'});
+  }
+  const dows=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  let html=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-day other-month">${diprev-firstDay+i+1}</div>`;
+  for(let d=1;d<=dim;d++){
+    const isToday=d===tD&&month===tM&&year===tY;
+    const evs=dayEvents[d]||[];
+    const isLib=evs.some(x=>x.type==='libur');
+    const isPer=evs.some(x=>x.type==='peringatan');
+    const isRam=evs.some(x=>x.type==='ramadan');
+    const isSyw=evs.some(x=>x.type==='syawal');
+    let cls='cal-day';
+    if(isToday)cls+=' today';
+    if(isLib)cls+=' is-libur';
+    else if(isPer)cls+=' is-peringatan';
+    if(isRam)cls+=' has-ramadan';
+    if(isSyw)cls+=' has-syawal';
+    const dots=evs.length?`<div class="cal-dots">${evs.slice(0,4).map(e=>`<div class="cal-dot" style="background:${e.color}"></div>`).join('')}</div>`:'';
+    const dk=toDateKey(year,month,d);
+    html+=`<div class="${cls}" onclick="selectCalDay(${d},'${dk}')">${d}${dots}</div>`;
+  }
+  const total=firstDay+dim;const rem=total%7===0?0:7-(total%7);
+  for(let d=1;d<=rem;d++)html+=`<div class="cal-day other-month">${d}</div>`;
+  document.getElementById('cal-grid').innerHTML=html;
+}
+
+function selectCalDay(dayNum,dateStr){
+  state.calSelected=dateStr;
+  const year=state.calYear,month=state.calMonth;
+  const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const events=[];
+  const lib=LIBUR_NASIONAL[dateStr];   if(lib) events.push({label:'🔴 '+lib,color:'var(--dot-libur)'});
+  const per=HARI_PERINGATAN[dateStr];  if(per) events.push({label:'🔵 '+per,color:'var(--dot-peringatan)'});
+  const rD=new Date(getTargetTs('ramadan'));if(rD.getFullYear()===year&&rD.getMonth()===month&&rD.getDate()===dayNum)events.push({label:'🌙 1 Ramadhan 1448H',color:'var(--dot-ramadan)'});
+  const sD=new Date(getTargetTs('syawal')); if(sD.getFullYear()===year&&sD.getMonth()===month&&sD.getDate()===dayNum)events.push({label:'⭐ 1 Syawal 1448H',color:'var(--dot-syawal)'});
+  state.timers.forEach(t=>{if(!t.daily&&t.timestamp){const d=new Date(t.timestamp);if(d.getFullYear()===year&&d.getMonth()===month&&d.getDate()===dayNum)events.push({label:t.name,color:'var(--dot-custom)'}); }});
+  const det=document.getElementById('cal-detail');
+  const dateLabel=`${dayNum} ${months[month]} ${year}`;
+  if(!events.length){
+    det.innerHTML=`<div class="cal-detail-title">${dateLabel}</div><div style="color:rgba(237,242,247,0.35);font-size:11px;">Tidak ada event · <button class="cev-use-btn" onclick="useDateInForm('${dateStr}')">+ Tambah event</button></div>`;
+  }else{
+    const evHtml=events.map(e=>`<div class="cal-detail-ev"><div class="cev-dot" style="background:${e.color}"></div>${escHtml(e.label)}<button class="cev-use-btn" onclick="useDateInForm('${dateStr}')">Pakai</button></div>`).join('');
+    det.innerHTML=`<div class="cal-detail-title">${dateLabel}</div><div class="cal-detail-events">${evHtml}</div>`;
+  }
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetAll(){
+  if(!confirm('Reset semua pengaturan & hapus semua timer?'))return;
+  localStorage.clear();
+  const now=new Date();
+  state={heroMode:'ramadan',ramadanAdj:0,syawalAdj:0,
+    pulangTime:DEFAULTS.PULANG_TIME,shiftStart:DEFAULTS.SHIFT_START,shiftEnd:DEFAULTS.SHIFT_END,
+    timers:[],weeklySchedule:{...DEFAULTS.WEEKLY_SCHEDULE},todayOverride:null,
+    calYear:now.getFullYear(),calMonth:now.getMonth(),calSelected:null,formMode:'specific',editingId:null};
+  document.getElementById('gauge-start').value=state.shiftStart;
+  document.getElementById('gauge-end').value=state.shiftEnd;
+  applyState();
+}
+
+function applyState(){
+  document.getElementById('gauge-start').value=state.shiftStart;
+  document.getElementById('gauge-end').value=state.shiftEnd;
+  setHeroMode(state.heroMode);
+  renderTimerList();updateNextEvent();updateMetrics();renderCalendar();updateGauge();
+}
+
+// ============================================================
+// TICK
+// ============================================================
+function tick(){
+  updateHeader();updateHeroCountdown();updatePulang();
+  renderTimerList();updateNextEvent();updateGauge();updateMetrics();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function init(){
+  const now=new Date();
+  state.calYear=now.getFullYear();state.calMonth=now.getMonth();
+  initIcons();initGauge();applyState();tick();
+  setInterval(tick,250);
+})();
+</script>
+
+</body></html>
