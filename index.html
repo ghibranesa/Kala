@@ -67,12 +67,13 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .section-label{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);padding:0 2px;}
 .section-label .sl-line{flex:1;height:1px;background:linear-gradient(90deg,currentColor 0%,transparent 100%);opacity:0.25;}
 
-/* ===== HEADER ===== */
-.header-bar{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,#1d2d44 0%,#2b4c65 55%,#366878 100%);border:1px solid rgba(255,255,255,0.18);box-shadow:0 10px 28px rgba(24,42,64,0.22);color:var(--text-on-dark);}
-.header-bar::after{content:'';position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(127,179,207,0.24) 0%,transparent 70%);top:-90px;right:-40px;pointer-events:none;}
-.header-brand,.header-right{position:relative;z-index:1;}
+/* ===== HEADER & AYAT GABUNGAN ===== */
+.header-bar{position:relative;overflow:hidden;display:flex;flex-direction:column;padding:20px 24px;gap:16px;background:linear-gradient(135deg,#162436 0%,#223b58 55%,#2d5278 100%)!important;background-clip:padding-box;border:1px solid rgba(255,255,255,0.12);box-shadow:0 10px 28px rgba(15,24,36,0.28);color:var(--text-on-dark);}
+.header-bar::after{content:'';position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(127,179,207,0.22) 0%,transparent 70%);top:-90px;right:-40px;pointer-events:none;}
+.header-top,.header-ayat{position:relative;z-index:1;}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .header-brand{display:flex;flex-direction:column;gap:4px;}
-.greeting-line{font-size:12.5px;font-weight:600;color:var(--accent-light);letter-spacing:-0.1px;line-height:1.2;}
+.greeting-line{font-size:12.5px;font-weight:600;color:var(--accent-light);letter-spacing:-0.1px;line-height:1.2;margin-bottom:4px;}
 .app-name{font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.6px;line-height:1;display:flex;align-items:center;gap:9px;}
 .app-name .ic{color:var(--accent-light);}
 .date-line{font-size:11px;color:var(--text-on-dark-muted);font-weight:400;line-height:1.4;}
@@ -80,6 +81,12 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .clock-block{text-align:right;min-width:108px;flex-shrink:0;}
 .clock-display{font-size:24px;font-weight:700;color:#ffffff;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1;}
 .clock-tz{font-size:9.5px;font-weight:600;color:var(--text-on-dark-muted);letter-spacing:0.6px;margin-top:1px;}
+.header-ayat{display:flex;flex-direction:column;gap:10px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.12);}
+.header-ayat .ayat-ref{color:var(--accent-light);}
+.header-ayat .ayat-arabic{color:#ffffff;}
+.header-ayat .ayat-text{color:rgba(237,242,247,0.84);}
+.header-ayat .ayat-refresh-btn{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);color:var(--text-on-dark);}
+.header-ayat .ayat-refresh-btn:hover{background:rgba(255,255,255,0.18);color:#ffffff;}
 
 /* Status badge — clickable */
 .status-badge{padding:6px 12px;border-radius:var(--r-pill);font-size:11px;font-weight:700;letter-spacing:0.3px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;user-select:none;}
@@ -363,44 +370,45 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <!-- PAGE -->
 <div class="page-wrapper">
 
-  <!-- HEADER -->
+  <!-- HEADER & KUTIPAN AYAT -->
   <header class="glass-dark-2 header-bar">
-    <div class="header-brand">
-      <div class="app-name">
-        <span class="ic" id="ic-app"></span>
-        <span>my<span style="color:var(--accent-light)">Countdown</span></span>
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
+        <div class="app-name">
+          <span class="ic" id="ic-app"></span>
+          <span>my<span style="color:var(--accent-light)">Countdown</span></span>
+        </div>
+        <div class="date-line" id="hdr-date">Memuat…</div>
       </div>
-      <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
-      <div class="date-line" id="hdr-date">Memuat…</div>
+      <div class="header-right">
+        <div class="clock-block">
+          <div class="clock-display" id="hdr-clock">00:00:00</div>
+          <div class="clock-tz">WIB · UTC+7</div>
+        </div>
+        <div class="status-badge working" id="status-badge" onclick="openWorkScheduleModal()" title="Klik untuk atur jadwal kerja">
+          <span class="ic" id="ic-status"></span>
+          <span id="status-text">WFO</span>
+        </div>
+      </div>
     </div>
-    <div class="header-right">
-      <div class="clock-block">
-        <div class="clock-display" id="hdr-clock">00:00:00</div>
-        <div class="clock-tz">WIB · UTC+7</div>
+
+    <div class="header-ayat">
+      <div class="ayat-header">
+        <span class="ayat-ref"><span class="ic" id="ic-sl-7"></span> <span id="ayat-ref">Memuat ayat…</span></span>
       </div>
-      <div class="status-badge working" id="status-badge" onclick="openWorkScheduleModal()" title="Klik untuk atur jadwal kerja">
-        <span class="ic" id="ic-status"></span>
-        <span id="status-text">WFO</span>
+      <p class="ayat-arabic" id="ayat-arabic" dir="rtl" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+      <p class="ayat-text" id="ayat-text">Mengambil terjemahan Al-Qur'an…</p>
+      <div class="ayat-actions">
+        <button class="ayat-refresh-btn" id="btn-story-gen" onclick="openStoryModal()">
+          <span class="ic" id="ic-story-share"></span> Buat Story
+        </button>
+        <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
+          <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
+        </button>
       </div>
     </div>
   </header>
-
-  <!-- Section: Kutipan Ayat (Full Width di Bawah Header) -->
-  <div class="glass-light ayat-card">
-    <div class="ayat-header">
-      <span class="ayat-ref"><span class="ic" id="ic-sl-7"></span> <span id="ayat-ref">Memuat ayat…</span></span>
-    </div>
-    <p class="ayat-arabic" id="ayat-arabic" dir="rtl" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-    <p class="ayat-text" id="ayat-text">Mengambil terjemahan Al-Qur'an…</p>
-    <div class="ayat-actions">
-      <button class="ayat-refresh-btn" id="btn-story-gen" onclick="openStoryModal()">
-        <span class="ic" id="ic-story-share"></span> Buat Story
-      </button>
-      <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
-        <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
-      </button>
-    </div>
-  </div>
 
   <!-- LOGICAL FLOW SECTIONS -->
   <div class="flow-sections">
