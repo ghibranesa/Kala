@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>myCountdown</title>
+<title>Kala - Daily Routine &amp; Countdown</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap">
 
@@ -62,6 +62,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 
 .ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ic svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#ic-app svg{fill:currentColor;stroke:none;}
 
 /* ===== SECTION LABEL ===== */
 .section-label{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);padding:0 2px;}
@@ -72,11 +73,14 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .header-bar::after{content:'';position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(127,179,207,0.22) 0%,transparent 70%);top:-90px;right:-40px;pointer-events:none;}
 .header-top,.header-ayat{position:relative;z-index:1;}
 .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.header-brand{display:flex;flex-direction:column;gap:4px;}
-.greeting-line{font-size:12.5px;font-weight:600;color:var(--accent-light);letter-spacing:-0.1px;line-height:1.2;margin-bottom:4px;}
-.app-name{font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.6px;line-height:1;display:flex;align-items:center;gap:9px;}
+.header-brand{display:flex;flex-direction:column;gap:5px;}
+.greeting-line{font-size:15px;font-weight:600;color:var(--accent-light);letter-spacing:-0.2px;line-height:1.25;margin-top:2px;}
+.app-name{font-size:28px;font-weight:700;color:#ffffff;letter-spacing:-0.8px;line-height:1;display:flex;align-items:center;gap:2px;}
+.app-name > span:last-child{margin-left:-2px;}
 .app-name .ic{color:var(--accent-light);}
 .date-line{font-size:11px;color:var(--text-on-dark-muted);font-weight:400;line-height:1.4;}
+.loc-line{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-on-dark-muted);margin-top:2px;cursor:pointer;width:fit-content;transition:color 0.15s;}
+.loc-line:hover{color:var(--accent-light);}
 .header-right{display:flex;align-items:center;gap:10px;}
 .clock-block{text-align:right;min-width:108px;flex-shrink:0;}
 .clock-display{font-size:24px;font-weight:700;color:#ffffff;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1;}
@@ -363,8 +367,11 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 }}
 :root[data-theme="dark"] .dev-link{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.09);color:var(--text-secondary);}
 :root[data-theme="dark"] .dev-link:hover{background:rgba(255,255,255,0.11);color:var(--text-primary);}
+.footer-actions{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
 .btn-reset{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
 .btn-reset:hover{color:var(--accent-rose);background:rgba(194,107,130,0.1);}
+.btn-io{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-secondary);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
+.btn-io:hover{color:var(--accent);background:rgba(79,130,160,0.12);}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:860px){
@@ -385,12 +392,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <header class="glass-dark-2 header-bar">
     <div class="header-top">
       <div class="header-brand">
-        <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
         <div class="app-name">
           <span class="ic" id="ic-app"></span>
-          <span>my<span style="color:var(--accent-light)">Countdown</span></span>
+          <span>Kala<span style="color:var(--accent-light)">.</span></span>
         </div>
+        <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
         <div class="date-line" id="hdr-date">Memuat…</div>
+        <div class="loc-line" id="hdr-location" onclick="detectLocation(true)" title="Klik untuk perbarui lokasi">
+          <span class="ic" id="ic-loc"></span>
+          <span id="loc-text">Mendeteksi lokasi…</span>
+        </div>
       </div>
       <div class="header-right">
         <div class="clock-block">
@@ -703,9 +714,18 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         </a>
       </div>
     </div>
-    <button class="btn-reset" onclick="resetAll()">
-      <span class="ic" id="ic-reset"></span> Reset Default
-    </button>
+    <div class="footer-actions">
+      <button class="btn-io" onclick="exportData()" title="Unduh backup data (JSON)">
+        <span class="ic" id="ic-export"></span> Ekspor
+      </button>
+      <button class="btn-io" onclick="document.getElementById('import-file').click()" title="Pulihkan data dari file JSON">
+        <span class="ic" id="ic-import"></span> Impor
+      </button>
+      <input type="file" id="import-file" accept=".json,application/json" style="display:none;" onchange="importData(event)">
+      <button class="btn-reset" onclick="resetAll()">
+        <span class="ic" id="ic-reset"></span> Reset Default
+      </button>
+    </div>
   </footer>
 </div>
 
@@ -836,10 +856,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 function mkIcon(name,size=14){
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('width',size);svg.setAttribute('height',size);
-  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('stroke','currentColor');
-  svg.setAttribute('fill','none');svg.setAttribute('stroke-width','2');
-  svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+  svg.setAttribute('viewBox','0 0 24 24');
+  if(name==='kala'){
+    svg.setAttribute('fill','currentColor');
+    svg.setAttribute('fill-rule','evenodd');
+    svg.setAttribute('clip-rule','evenodd');
+  }else{
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+  }
   const paths={
+    kala:['M14 3l-3.2 4.3c-2.3.4-4.2 1.8-5.1 3.7l-2.2.8c-.5.2-.7.8-.4 1.3l1.1 1.7c.2 1.7 1.2 3.2 2.7 4L8 21h8.5c2.2 0 4-1.8 4-4v-4.5c0-4-2.5-7-5.7-7.9L14 3zm-4.8 7.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z'],
     timer:['M10 2h4','M12 14l4-4','M4.6 11a8 8 0 1 0 1.1-3.5'],
     clock:['M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2','M12 6v6l4 2'],
     briefcase:['M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2','M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2'],
@@ -858,6 +888,9 @@ function mkIcon(name,size=14){
     edit:['M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7','M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z'],
     trash:['M3 6h18','M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6','M10 11v6','M14 11v6','M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'],
     'rotate-ccw':['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8','M3 3v5h5'],
+    'map-pin':['M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z','M12 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'],
+    download:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','M7 10l5 5 5-5','M12 15V3'],
+    upload:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','M17 8l-5-5-5 5','M12 3v12'],
     settings:['M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z','M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'],
     'bar-chart':['M12 20V10','M18 20V4','M6 20v-4'],
     layers:['M12 2l8 4-8 4-8-4z','M4 12l8 4 8-4','M4 16l8 4 8-4'],
@@ -866,6 +899,7 @@ function mkIcon(name,size=14){
     check:['M20 6L9 17l-5-5'],
     mail:['M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z','M22 6l-10 7L2 6'],
     instagram:['M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z','M17.5 6.5h.01','M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2z'],
+    github:['M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4','M9 18c-4.51 2-5-2-7-2'],
   };
   const d=paths[name]||paths['clock'];
   d.forEach(p=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',p);svg.appendChild(path);});
@@ -874,7 +908,7 @@ function mkIcon(name,size=14){
 function setIcon(el,name,size=14){if(!el)return;el.innerHTML='';el.appendChild(mkIcon(name,size));}
 
 function initIcons(){
-  setIcon(document.getElementById('ic-app'),'timer',21);
+  setIcon(document.getElementById('ic-app'),'kala',28);
   setIcon(document.getElementById('ic-status'),'briefcase',12);
   setIcon(document.getElementById('ic-add-hero'),'plus',14);
   setIcon(document.getElementById('ic-moon'),'moon',12);
@@ -892,6 +926,9 @@ function initIcons(){
   setIcon(document.getElementById('ic-tab-add'),'plus',14);
   setIcon(document.getElementById('ic-cal-prev'),'chevron-left',12);
   setIcon(document.getElementById('ic-cal-next'),'chevron-right',12);
+  setIcon(document.getElementById('ic-loc'),'map-pin',11);
+  setIcon(document.getElementById('ic-export'),'download',11);
+  setIcon(document.getElementById('ic-import'),'upload',11);
   setIcon(document.getElementById('ic-reset'),'rotate-ccw',11);
   setIcon(document.getElementById('ic-gauge-edit'),'pencil',11);
   setIcon(document.getElementById('ic-m-pulang'),'clock',15);
@@ -1992,16 +2029,16 @@ async function renderStoryCanvas(){
 
   // 6. Clean Minimalist Web Footer
   ctx.fillStyle='rgba(255,255,255,0.92)';
-  ctx.font='700 30px "DM Sans", sans-serif';
-  ctx.fillText('myCountdown',W/2,1675);
+  ctx.font='700 32px "DM Sans", sans-serif';
+  ctx.fillText('Kala.',W/2,1675);
 
   ctx.fillStyle='rgba(237,242,247,0.52)';
   ctx.font='400 22px "DM Sans", sans-serif';
-  ctx.fillText('Hitung mundur Ramadhan, Syawal & pengingat waktu harian',W/2,1716);
+  ctx.fillText('Ruang waktu harian, jadwal & pengingat ibadah',W/2,1716);
 
   const webUrl=(window.location.hostname&&window.location.hostname!=='localhost')
     ?window.location.hostname
-    :'mycountdown.github.io';
+    :'ghibranesa.github.io/kala';
   ctx.fillStyle='#7fb3cf';
   ctx.font='600 21px "DM Sans", sans-serif';
   ctx.fillText(webUrl,W/2,1758);
@@ -2021,9 +2058,128 @@ function downloadStoryImage(){
   const canvas=document.getElementById('story-canvas');
   const link=document.createElement('a');
   const tk=todayKey();
-  link.download=`myCountdown-Story-${tk}.png`;
+  link.download=`Kala-Story-${tk}.png`;
   link.href=canvas.toDataURL('image/png');
   link.click();
+}
+
+// ============================================================
+// DEVICE LOCATION & DATA EXPORT/IMPORT
+// ============================================================
+function detectLocation(forceRefresh=false){
+  const locEl=document.getElementById('loc-text');
+  if(!locEl)return;
+
+  // Gunakan cache 30 menit agar tidak spam API
+  const cached=LS.get('cachedLocation',null);
+  if(!forceRefresh&&cached&&(Date.now()-cached.ts<1800000)){
+    locEl.textContent=cached.label;
+    return;
+  }
+
+  const fallbackTz=()=>{
+    const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Jakarta';
+    const city=tz.split('/').pop().replace(/_/g,' ');
+    locEl.textContent=`${city} (Zona Perangkat)`;
+  };
+
+  if(!('geolocation' in navigator)){
+    fallbackTz();
+    return;
+  }
+
+  locEl.textContent='Mendeteksi lokasi…';
+  navigator.geolocation.getCurrentPosition(
+    async(pos)=>{
+      try{
+        const{latitude,longitude}=pos.coords;
+        const res=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`);
+        const data=await res.json();
+        const area=data.locality||data.city||data.principalSubdivision||'';
+        const region=data.principalSubdivision&&data.principalSubdivision!==area?data.principalSubdivision:(data.countryName||'');
+        const label=[area,region].filter(Boolean).join(', ')||'Lokasi Ditemukan';
+        locEl.textContent=label;
+        LS.set('cachedLocation',{label,ts:Date.now()});
+      }catch{
+        fallbackTz();
+      }
+    },
+    ()=>{
+      fallbackTz();
+    },
+    {enableHighAccuracy:false,timeout:8000,maximumAge:600000}
+  );
+}
+
+function exportData(){
+  const backup={
+    app:'Kala',
+    version:1,
+    exportedAt:new Date().toISOString(),
+    data:{
+      heroMode:state.heroMode,
+      ramadanAdj:state.ramadanAdj,
+      syawalAdj:state.syawalAdj,
+      pulangTime:state.pulangTime,
+      shiftStart:state.shiftStart,
+      shiftEnd:state.shiftEnd,
+      timers:state.timers,
+      todos:state.todos,
+      weeklySchedule:state.weeklySchedule,
+      todayOverride:state.todayOverride
+    }
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Kala-Backup-${todayKey()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      const parsed=JSON.parse(e.target.result);
+      const d=parsed.data||parsed;
+      if(!d||typeof d!=='object')throw new Error('Format tidak valid');
+      if(!confirm('Timpa semua data saat ini dengan data dari file backup?'))return;
+
+      if(d.heroMode)state.heroMode=d.heroMode;
+      if(typeof d.ramadanAdj==='number')state.ramadanAdj=d.ramadanAdj;
+      if(typeof d.syawalAdj==='number')state.syawalAdj=d.syawalAdj;
+      if(typeof d.pulangTime==='string')state.pulangTime=d.pulangTime;
+      if(typeof d.shiftStart==='string')state.shiftStart=d.shiftStart;
+      if(typeof d.shiftEnd==='string')state.shiftEnd=d.shiftEnd;
+      if(Array.isArray(d.timers))state.timers=d.timers;
+      if(Array.isArray(d.todos))state.todos=d.todos;
+      if(d.weeklySchedule&&typeof d.weeklySchedule==='object')state.weeklySchedule=d.weeklySchedule;
+      if(d.todayOverride!==undefined)state.todayOverride=d.todayOverride;
+
+      LS.set('heroMode',state.heroMode);
+      LS.set('ramadanAdj',state.ramadanAdj);
+      LS.set('syawalAdj',state.syawalAdj);
+      LS.set('pulangTime',state.pulangTime);
+      LS.set('shiftStart',state.shiftStart);
+      LS.set('shiftEnd',state.shiftEnd);
+      LS.set('timers',state.timers);
+      LS.set('todos',state.todos);
+      LS.set('weeklySchedule',state.weeklySchedule);
+      LS.set('todayOverride',state.todayOverride);
+
+      applyState();
+      alert('Data berhasil dipulihkan!');
+    }catch{
+      alert('Gagal membaca file backup. Pastikan file JSON valid.');
+    }finally{
+      event.target.value='';
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ============================================================
@@ -2032,7 +2188,7 @@ function downloadStoryImage(){
 (function init(){
   const now=new Date();
   state.calYear=now.getFullYear();state.calMonth=now.getMonth();
-  initIcons();initGauge();applyState();tick();fetchRandomAyat();
+  initIcons();initGauge();applyState();tick();fetchRandomAyat();detectLocation();
   setInterval(tick,250);
 })();
 </script>
