@@ -321,7 +321,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
       <div class="status-badge working" id="status-badge" onclick="openWorkScheduleModal()" title="Klik untuk atur jadwal kerja">
         <span class="ic" id="ic-status"></span>
-        <span id="status-text">Working Hours</span>
+        <span id="status-text">WFO</span>
       </div>
     </div>
   </header>
@@ -629,7 +629,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
     <div>
       <label class="modal-label">Default per Hari</label>
-      <div class="modal-hint" style="margin-bottom:8px;">Klik hari untuk putar status: Kerja → WFH → Libur → Off</div>
+      <div class="modal-hint" style="margin-bottom:8px;">Klik hari untuk putar status: WFO → WFH → Day Off → Off</div>
       <div class="wday-grid" id="wday-grid">
         <!-- filled by JS -->
       </div>
@@ -641,9 +641,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <label class="modal-label">Override Hari Ini</label>
       <div class="modal-hint" style="margin-bottom:8px;" id="override-date-label">Hari ini: —</div>
       <div class="override-status-btns">
-        <button class="ov-btn working" id="ov-working" onclick="setTodayOverride('working')">Kerja</button>
+        <button class="ov-btn working" id="ov-working" onclick="setTodayOverride('working')">WFO</button>
         <button class="ov-btn wfh"     id="ov-wfh"     onclick="setTodayOverride('wfh')">WFH</button>
-        <button class="ov-btn libur"   id="ov-libur"   onclick="setTodayOverride('libur')">Libur</button>
+        <button class="ov-btn libur"   id="ov-libur"   onclick="setTodayOverride('libur')">Day Off</button>
         <button class="ov-btn off"     id="ov-off"     onclick="setTodayOverride(null)">Pakai Default</button>
       </div>
     </div>
@@ -871,9 +871,9 @@ function getTodayWorkStatus(){
 }
 
 function getStatusInfo(status,isWorkHours){
-  if(status==='libur') return{cls:'libur',text:'Hari Libur',icon:'umbrella-off'};
+  if(status==='libur') return{cls:'libur',text:'Day Off',icon:'umbrella-off'};
   if(status==='wfh')   return{cls:'wfh',text:'WFH',icon:'laptop'};
-  if(status==='working'&&isWorkHours) return{cls:'working',text:'Working Hours',icon:'briefcase'};
+  if(status==='working'&&isWorkHours) return{cls:'working',text:'WFO',icon:'briefcase'};
   if(status==='working'&&!isWorkHours) return{cls:'offduty',text:'Off Duty',icon:'clock'};
   return{cls:'offduty',text:'Off Duty',icon:'clock'};
 }
@@ -1112,7 +1112,7 @@ function renderWdayGrid(){
       renderWdayGrid();
     };
     const lbl=document.createElement('div');lbl.className='wday-label';
-    lbl.textContent=s==='working'?'Kerja':s==='wfh'?'WFH':s==='libur'?'Libur':'Off';
+    lbl.textContent=s==='working'?'WFO':s==='wfh'?'WFH':s==='libur'?'Day Off':'Off';
     wrap.appendChild(btn);wrap.appendChild(lbl);
     grid.appendChild(wrap);
   }
