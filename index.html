@@ -454,15 +454,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <div class="glass-light metrics-strip">
         <div class="metric-tile">
           <div class="m-val" id="m-hari-ramadan">—</div>
-          <div class="m-label"><span class="m-dot" style="background:var(--dot-ramadan)"></span>Hari ke Ramadhan</div>
+          <div class="m-label"><span class="ic" id="ic-m-ramadan" style="color:var(--text-muted)"></span>Hari ke Ramadhan</div>
         </div>
         <div class="metric-tile">
           <div class="m-val" id="m-hari-syawal">—</div>
-          <div class="m-label"><span class="m-dot" style="background:var(--dot-syawal)"></span>Hari ke Syawal</div>
+          <div class="m-label"><span class="ic" id="ic-m-syawal" style="color:var(--text-muted)"></span>Hari ke Syawal</div>
         </div>
         <div class="metric-tile">
           <div class="m-val" id="m-active">0</div>
-          <div class="m-label"><span class="m-dot" style="background:var(--dot-custom)"></span>Event Aktif</div>
+          <div class="m-label"><span class="ic" id="ic-m-active" style="color:var(--text-muted)"></span>Event Aktif</div>
         </div>
         <div class="metric-tile">
           <div class="m-val" id="m-target">18:00</div>
@@ -723,6 +723,9 @@ function initIcons(){
   setIcon(document.getElementById('ic-add-hero'),'plus',14);
   setIcon(document.getElementById('ic-moon'),'moon',12);
   setIcon(document.getElementById('ic-star'),'star',12);
+  setIcon(document.getElementById('ic-m-ramadan'),'moon',11);
+  setIcon(document.getElementById('ic-m-syawal'),'star',11);
+  setIcon(document.getElementById('ic-m-active'),'layers',11);
   setIcon(document.getElementById('ic-clock-m'),'clock',11);
   setIcon(document.getElementById('ic-home'),'home',14);
   setIcon(document.getElementById('ic-pencil'),'pencil',11);
