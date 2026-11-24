@@ -69,7 +69,8 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 
 /* ===== HEADER ===== */
 .header-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;gap:12px;flex-wrap:wrap;}
-.header-brand{display:flex;flex-direction:column;gap:3px;}
+.header-brand{display:flex;flex-direction:column;gap:4px;}
+.greeting-line{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:-0.1px;line-height:1.2;}
 .app-name{font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-0.6px;line-height:1;display:flex;align-items:center;gap:9px;}
 .app-name .ic{color:var(--accent);}
 .date-line{font-size:11px;color:var(--text-secondary);font-weight:400;line-height:1.4;}
@@ -363,6 +364,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <!-- HEADER -->
   <header class="glass-light header-bar">
     <div class="header-brand">
+      <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
       <div class="app-name">
         <span class="ic" id="ic-app"></span>
         <span>my<span style="color:var(--accent)">Countdown</span></span>
@@ -1022,6 +1024,8 @@ function updateHeader(){
   document.getElementById('hdr-date').textContent=`${dateFmt.format(now)} · ${toHijri(now)}`;
 
   const{h,m}=getWIBParts(now);
+  const greet=h>=4&&h<11?'Selamat Pagi':h>=11&&h<15?'Selamat Siang':h>=15&&h<18?'Selamat Sore':'Selamat Malam';
+  document.getElementById('hdr-greeting').textContent=`Hai, ${greet}!`;
   const cur=h*60+m;
   const hasShift=Boolean(state.shiftStart&&state.shiftEnd);
   let isWorkHours=false;
