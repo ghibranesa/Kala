@@ -89,7 +89,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 /* ===== LOGICAL ROW GRID ===== */
 .flow-sections{display:flex;flex-direction:column;gap:18px;}
 .flow-group{display:flex;flex-direction:column;gap:10px;}
-.flow-row{display:grid;grid-template-columns:1.25fr 0.95fr;gap:14px;align-items:start;}
+.flow-row{display:grid;grid-template-columns:1.25fr 0.95fr;gap:14px;align-items:stretch;}
 .flow-row-equal{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;}
 .flow-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
 
@@ -230,7 +230,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .cal-month-label{font-size:12.5px;font-weight:700;color:var(--text-on-dark);}
 .cal-nav-btn{width:24px;height:24px;border-radius:var(--r-pill);border:1px solid var(--glass-dark-border);background:rgba(255,255,255,0.07);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
 .cal-nav-btn:hover{background:rgba(255,255,255,0.16);color:white;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;flex:1;align-content:space-between;}
 .cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;padding:2px 0;}
 .cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:34px;border-radius:9px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-on-dark-muted);cursor:pointer;transition:all 0.12s;}
 .cal-day:hover:not(.other-month){background:rgba(255,255,255,0.1);color:white;}
