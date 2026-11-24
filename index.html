@@ -179,7 +179,6 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .timers-section{padding:18px 20px;display:flex;flex-direction:column;gap:11px;}
 .timers-section-header{display:flex;align-items:center;justify-content:space-between;}
 .search-bar{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.55);border-radius:var(--r-pill);padding:7px 12px;}
-:root[data-theme="dark"] .search-bar{background:rgba(0,0,0,0.2);border-color:rgba(255,255,255,0.1);}
 .search-bar input{flex:1;border:none;background:transparent;font-family:var(--font);font-size:12px;color:var(--text-primary);outline:none;min-width:0;}
 .search-bar input::placeholder{color:var(--text-muted);}
 .custom-list{display:flex;flex-direction:column;gap:5px;overflow-y:auto;max-height:200px;padding-right:2px;}
@@ -187,8 +186,20 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .custom-list::-webkit-scrollbar-thumb{background:rgba(79,130,160,0.3);border-radius:3px;}
 .custom-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.45);border-radius:12px;padding:7px 10px;transition:background 0.12s;}
 .custom-item:hover{background:rgba(255,255,255,0.55);}
+.ci-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  .search-bar{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.09);}
+  .custom-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+  .custom-item:hover{background:rgba(255,255,255,0.09);}
+  .modal-input{background:rgba(15,23,36,0.75);border-color:rgba(255,255,255,0.12);}
+  .modal-input:focus{background:rgba(15,23,36,0.9);}
+}}
+:root[data-theme="dark"] .search-bar{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.09);}
 :root[data-theme="dark"] .custom-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
-.ci-dot{width:7px;height:7px;border-radius:50%;background:var(--dot-custom);flex-shrink:0;}
+:root[data-theme="dark"] .custom-item:hover{background:rgba(255,255,255,0.09);}
+:root[data-theme="dark"] .modal-input{background:rgba(15,23,36,0.75);border-color:rgba(255,255,255,0.12);}
+:root[data-theme="dark"] .modal-input:focus{background:rgba(15,23,36,0.9);}
 .ci-info{flex:1;min-width:0;}
 .ci-name{font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ci-date{font-size:10px;color:var(--text-muted);white-space:nowrap;}
@@ -210,7 +221,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .tab-icon-btn.active{background:rgba(255,255,255,0.18);color:var(--text-on-dark);border-color:rgba(255,255,255,0.28);}
 .tab-icon-btn:hover:not(.active){background:rgba(255,255,255,0.1);}
 .cal-tab,.add-tab{display:flex;flex-direction:column;gap:10px;flex:1;}
-.cal-tab.hidden,.add-tab.hidden{display:none;}
+.hidden,.cal-tab.hidden,.add-tab.hidden{display:none!important;}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;}
 .cal-month-label{font-size:12.5px;font-weight:700;color:var(--text-on-dark);}
 .cal-nav-btn{width:24px;height:24px;border-radius:var(--r-pill);border:1px solid var(--glass-dark-border);background:rgba(255,255,255,0.07);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
@@ -562,10 +573,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         </div>
 
         <div class="add-tab hidden" id="add-tab">
-          <div class="form-mode-switcher">
-            <button class="form-mode-btn active" id="fm-specific" onclick="setFormMode('specific')">Tanggal &amp; Jam</button>
-            <button class="form-mode-btn" id="fm-daily" onclick="setFormMode('daily')">Harian / Berulang</button>
-          </div>
           <div class="form-fields">
             <div>
               <label class="form-field-label">Nama Event</label>
@@ -576,10 +583,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
                 <div><label class="form-field-label">Tanggal</label><input class="form-input" id="f-date" type="date"></div>
                 <div><label class="form-field-label">Jam</label><input class="form-input" id="f-time" type="time" value="08:00"></div>
               </div>
-            </div>
-            <div id="f-daily-fields" class="hidden">
-              <label class="form-field-label">Jam Setiap Hari</label>
-              <input class="form-input" id="f-daily-time" type="time" value="08:00">
             </div>
             <button class="btn-create" onclick="createTimer()">Buat Timer →</button>
           </div>
@@ -602,18 +605,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="modal-title"><span class="ic" id="ic-m-pulang"></span> Atur Jam Kerja</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div>
-        <label class="modal-label">Mulai Shift</label>
+        <label class="modal-label">Jam Masuk</label>
         <input class="modal-input" id="modal-shift-start" type="time" value="08:00">
       </div>
       <div>
-        <label class="modal-label">Selesai Shift</label>
+        <label class="modal-label">Jam Pulang</label>
         <input class="modal-input" id="modal-shift-end" type="time" value="18:00">
       </div>
-    </div>
-    <div>
-      <label class="modal-label">Jam Pulang / Target Harian</label>
-      <input class="modal-input" id="modal-pulang-time" type="time" value="18:00">
-      <div class="modal-hint" style="margin-top:5px;">Hitung mundur "Jam Pulang" dihitung dari jam ini. Bisa beda dari selesai shift.</div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('modal-pulang')">Batal</button>
@@ -666,10 +664,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div id="mt-specific-wrap">
       <label class="modal-label">Tanggal &amp; Jam Target</label>
       <input class="modal-input" id="mt-datetime" type="datetime-local">
-    </div>
-    <div id="mt-daily-wrap" class="hidden">
-      <label class="modal-label">Jam Setiap Hari</label>
-      <input class="modal-input" id="mt-daily-time" type="time" value="08:00">
     </div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('modal-timer')">Batal</button>
@@ -1060,13 +1054,13 @@ function updatePulang(){
 function openEditPulang(){
   document.getElementById('modal-shift-start').value=state.shiftStart;
   document.getElementById('modal-shift-end').value=state.shiftEnd;
-  document.getElementById('modal-pulang-time').value=state.pulangTime;
   document.getElementById('modal-pulang').classList.remove('hidden');
 }
 function savePulang(){
   state.shiftStart=document.getElementById('modal-shift-start').value||state.shiftStart;
-  state.shiftEnd=document.getElementById('modal-shift-end').value||state.shiftEnd;
-  state.pulangTime=document.getElementById('modal-pulang-time').value||state.pulangTime;
+  const endVal=document.getElementById('modal-shift-end').value||state.shiftEnd;
+  state.shiftEnd=endVal;
+  state.pulangTime=endVal;
   LS.set('shiftStart',state.shiftStart);LS.set('shiftEnd',state.shiftEnd);LS.set('pulangTime',state.pulangTime);
   document.getElementById('gauge-start').value=state.shiftStart;
   document.getElementById('gauge-end').value=state.shiftEnd;
@@ -1205,9 +1199,6 @@ function openAddModal(prefillDate){
   const now=new Date();const off=now.getTimezoneOffset();
   const local=new Date(now.getTime()-off*60000);
   document.getElementById('mt-datetime').value=prefillDate?prefillDate+'T08:00':local.toISOString().slice(0,16);
-  document.getElementById('mt-daily-time').value='08:00';
-  document.getElementById('mt-specific-wrap').classList.remove('hidden');
-  document.getElementById('mt-daily-wrap').classList.add('hidden');
   document.getElementById('mt-save-btn').textContent='Tambah';
   document.getElementById('modal-timer').classList.remove('hidden');
 }
@@ -1219,17 +1210,9 @@ function openEditTimer(id){
   document.getElementById('modal-timer-title').appendChild(mkIcon('edit',15));
   document.getElementById('modal-timer-title').appendChild(document.createTextNode(' Edit Timer'));
   document.getElementById('mt-name').value=t.name;
-  if(t.daily){
-    document.getElementById('mt-specific-wrap').classList.add('hidden');
-    document.getElementById('mt-daily-wrap').classList.remove('hidden');
-    document.getElementById('mt-daily-time').value=t.dailyTime||'08:00';
-  }else{
-    document.getElementById('mt-specific-wrap').classList.remove('hidden');
-    document.getElementById('mt-daily-wrap').classList.add('hidden');
-    const d=new Date(t.timestamp);const off=d.getTimezoneOffset();
-    const local=new Date(d.getTime()-off*60000);
-    document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
-  }
+  const d=new Date(t.timestamp||Date.now());const off=d.getTimezoneOffset();
+  const local=new Date(d.getTime()-off*60000);
+  document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
   document.getElementById('mt-save-btn').textContent='Simpan';
   document.getElementById('modal-timer').classList.remove('hidden');
 }
@@ -1237,17 +1220,10 @@ function openEditTimer(id){
 function saveTimer(){
   const name=document.getElementById('mt-name').value.trim();
   if(!name){document.getElementById('mt-name').focus();return;}
-  let entry;
-  const isDaily=!document.getElementById('mt-daily-wrap').classList.contains('hidden');
-  if(isDaily){
-    const dailyTime=document.getElementById('mt-daily-time').value||'08:00';
-    entry={name,daily:true,dailyTime,id:state.editingId||genId()};
-  }else{
-    const dt=document.getElementById('mt-datetime').value;
-    if(!dt){document.getElementById('mt-datetime').focus();return;}
-    const ts=new Date(dt).getTime();if(isNaN(ts))return;
-    entry={name,timestamp:ts,id:state.editingId||genId()};
-  }
+  const dt=document.getElementById('mt-datetime').value;
+  if(!dt){document.getElementById('mt-datetime').focus();return;}
+  const ts=new Date(dt).getTime();if(isNaN(ts))return;
+  const entry={name,timestamp:ts,id:state.editingId||genId()};
   if(state.editingId){
     const idx=state.timers.findIndex(t=>t.id===state.editingId);if(idx>=0)state.timers[idx]=entry;
   }else{
