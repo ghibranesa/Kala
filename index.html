@@ -353,9 +353,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <div class="glass-light ayat-card">
     <div class="ayat-header">
       <span class="ayat-ref"><span class="ic" id="ic-sl-7"></span> <span id="ayat-ref">Memuat ayat…</span></span>
-      <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
-        <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
-      </button>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button class="ayat-refresh-btn" id="btn-story-gen" onclick="openStoryModal()">
+          <span class="ic" id="ic-story-share"></span> Buat Story
+        </button>
+        <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
+          <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
+        </button>
+      </div>
     </div>
     <p class="ayat-arabic" id="ayat-arabic" dir="rtl" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
     <p class="ayat-text" id="ayat-text">Mengambil terjemahan Al-Qur'an…</p>
@@ -713,6 +718,25 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
 </div>
 
+<!-- MODAL: Instagram Story Generator (9:16) -->
+<div class="modal-overlay hidden" id="modal-story">
+  <div class="modal-box" style="max-width:360px;align-items:center;">
+    <div class="modal-title" style="width:100%;justify-content:space-between;">
+      <span style="display:flex;align-items:center;gap:8px;"><span class="ic" id="ic-m-story"></span> Preview Story (9:16)</span>
+      <button type="button" class="ayat-refresh-btn" onclick="refreshStoryAyat()">
+        <span class="ic" id="ic-story-reroll"></span> Ganti Ayat
+      </button>
+    </div>
+    <div style="width:230px;aspect-ratio:9/16;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.2);">
+      <canvas id="story-canvas" width="1080" height="1920" style="width:100%;height:100%;display:block;"></canvas>
+    </div>
+    <div class="modal-actions" style="width:100%;">
+      <button class="modal-btn" onclick="closeModal('modal-story')">Tutup</button>
+      <button class="modal-btn primary" onclick="downloadStoryImage()">Download PNG</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // ICONS
@@ -745,6 +769,7 @@ function mkIcon(name,size=14){
     settings:['M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z','M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'],
     'bar-chart':['M12 20V10','M18 20V4','M6 20v-4'],
     layers:['M12 2l8 4-8 4-8-4z','M4 12l8 4 8-4','M4 16l8 4 8-4'],
+    share:['M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8','M16 6l-4-4-4 4','M12 2v13'],
   };
   const d=paths[name]||paths['clock'];
   d.forEach(p=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',p);svg.appendChild(path);});
@@ -784,6 +809,9 @@ function initIcons(){
   setIcon(document.getElementById('ic-sl-6'),'calendar',11);
   setIcon(document.getElementById('ic-sl-7'),'moon',11);
   setIcon(document.getElementById('ic-ayat-refresh'),'rotate-ccw',11);
+  setIcon(document.getElementById('ic-story-share'),'share',11);
+  setIcon(document.getElementById('ic-m-story'),'share',15);
+  setIcon(document.getElementById('ic-story-reroll'),'rotate-ccw',11);
 }
 
 // ============================================================
@@ -1477,8 +1505,14 @@ function tick(){
 }
 
 // ============================================================
-// RANDOM AYAT AL-QURAN (ID)
+// RANDOM AYAT AL-QURAN (ID) & STORY GENERATOR (9:16)
 // ============================================================
+let currentAyat={
+  ref:'QS. Al-Insyirah : 6',
+  arabic:'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
+  text:'Sesungguhnya bersama kesulitan ada kemudahan.'
+};
+
 async function fetchRandomAyat(){
   const refEl=document.getElementById('ayat-ref');
   const arEl=document.getElementById('ayat-arabic');
@@ -1498,6 +1532,11 @@ async function fetchRandomAyat(){
       const surah=idData.surah.englishName;
       const surahAr=arData.surah.name;
       const numInSurah=idData.numberInSurah;
+      currentAyat={
+        ref:`QS. ${surah} : ${numInSurah}`,
+        arabic:arData.text,
+        text:idData.text
+      };
       refEl.textContent=`QS. ${surah} (${surahAr}) : ${numInSurah}`;
       if(arEl)arEl.textContent=arData.text;
       txtEl.textContent=`"${idData.text}"`;
@@ -1505,14 +1544,264 @@ async function fetchRandomAyat(){
       throw new Error('Invalid response');
     }
   }catch(e){
+    currentAyat={
+      ref:'QS. Al-Insyirah : 6',
+      arabic:'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
+      text:'Sesungguhnya bersama kesulitan ada kemudahan.'
+    };
     refEl.textContent='QS. Al-Insyirah (سورة الشرح) : 6';
-    if(arEl)arEl.textContent='إِنَّ مَعَ الْعُسْرِ يُسْرًا';
-    txtEl.textContent='"Sesungguhnya bersama kesulitan ada kemudahan."';
+    if(arEl)arEl.textContent=currentAyat.arabic;
+    txtEl.textContent=`"${currentAyat.text}"`;
   }finally{
     if(arEl)arEl.style.opacity='0.92';
     txtEl.style.opacity='1';
     if(btn)btn.disabled=false;
   }
+}
+
+function wrapCanvasText(ctx,text,maxWidth){
+  const words=text.split(/\s+/);
+  const lines=[];
+  let line='';
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(ctx.measureText(test).width>maxWidth&&line){
+      lines.push(line);
+      line=w;
+    }else{
+      line=test;
+    }
+  }
+  if(line)lines.push(line);
+  return lines;
+}
+
+function drawRoundedRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+async function renderStoryCanvas(){
+  if(document.fonts&&document.fonts.ready){
+    await document.fonts.ready;
+  }
+  const canvas=document.getElementById('story-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=1080,H=1920;
+
+  // 1. Background Gradient (Deep Slate Glass Aesthetic)
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#131e2c');
+  bg.addColorStop(0.5,'#1b2b3e');
+  bg.addColorStop(1,'#0e1722');
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Ambient Radial Glows
+  const glow1=ctx.createRadialGradient(880,260,20,880,260,520);
+  glow1.addColorStop(0,'rgba(127,179,207,0.18)');
+  glow1.addColorStop(1,'rgba(127,179,207,0)');
+  ctx.fillStyle=glow1;
+  ctx.fillRect(0,0,W,H);
+
+  const glow2=ctx.createRadialGradient(200,1580,20,200,1580,500);
+  glow2.addColorStop(0,'rgba(62,164,148,0.14)');
+  glow2.addColorStop(1,'rgba(62,164,148,0)');
+  ctx.fillStyle=glow2;
+  ctx.fillRect(0,0,W,H);
+
+  // 2. Minimalist Islamic Double Frame & Corner Ornaments
+  ctx.strokeStyle='rgba(255,255,255,0.12)';
+  ctx.lineWidth=2;
+  drawRoundedRect(ctx,56,56,W-112,H-112,48);
+  ctx.stroke();
+
+  ctx.strokeStyle='rgba(127,179,207,0.18)';
+  ctx.lineWidth=1.5;
+  drawRoundedRect(ctx,74,74,W-148,H-148,38);
+  ctx.stroke();
+
+  // Subtle Top Islamic Star / Diamond Ornament
+  ctx.save();
+  ctx.translate(W/2,140);
+  ctx.strokeStyle='rgba(245,158,90,0.45)';
+  ctx.lineWidth=2;
+  ctx.strokeRect(-14,-14,28,28);
+  ctx.rotate(Math.PI/4);
+  ctx.strokeRect(-14,-14,28,28);
+  ctx.restore();
+
+  // Subtle Arabic Calligraphy Watermark
+  ctx.save();
+  ctx.font='700 220px "Amiri", serif';
+  ctx.fillStyle='rgba(255,255,255,0.035)';
+  ctx.textAlign='center';
+  ctx.fillText('رَمَضَان',W/2,440);
+  ctx.restore();
+
+  // 3. Date Header (Masehi & Hijriah)
+  const now=new Date();
+  const dateStr=new Intl.DateTimeFormat('id-ID',{
+    timeZone:'Asia/Jakarta',weekday:'long',day:'numeric',month:'long',year:'numeric'
+  }).format(now);
+  const hijriStr=toHijri(now);
+
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(237,242,247,0.65)';
+  ctx.font='600 28px "DM Sans", sans-serif';
+  ctx.fillText(dateStr.toUpperCase(),W/2,235);
+
+  ctx.fillStyle='#7fb3cf';
+  ctx.font='700 32px "DM Sans", sans-serif';
+  ctx.fillText(hijriStr,W/2,285);
+
+  // Thin Divider
+  ctx.strokeStyle='rgba(255,255,255,0.12)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(340,335);
+  ctx.lineTo(740,335);
+  ctx.stroke();
+
+  // 4. Ayat Card (Centerpiece)
+  const cardX=110,cardY=390,cardW=W-220,cardH=820;
+  ctx.fillStyle='rgba(255,255,255,0.05)';
+  drawRoundedRect(ctx,cardX,cardY,cardW,cardH,36);
+  ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.12)';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  // Surah Pill Badge
+  ctx.fillStyle='rgba(127,179,207,0.15)';
+  drawRoundedRect(ctx,W/2-190,cardY+44,380,48,24);
+  ctx.fill();
+  ctx.fillStyle='#7fb3cf';
+  ctx.font='700 24px "DM Sans", sans-serif';
+  ctx.fillText(currentAyat.ref,W/2,cardY+76);
+
+  // Arabic Text (Auto-scale if long)
+  const arLen=currentAyat.arabic.length;
+  const arFontSize=arLen>180?38:arLen>110?44:52;
+  ctx.font=`700 ${arFontSize}px "Amiri", serif`;
+  ctx.fillStyle='#f4f8fb';
+  const arLines=wrapCanvasText(ctx,currentAyat.arabic,cardW-110).slice(0,5);
+  let curY=cardY+165;
+  const arLineH=arFontSize*1.75;
+  for(const line of arLines){
+    ctx.fillText(line,W/2,curY);
+    curY+=arLineH;
+  }
+
+  // Divider between Arabic & Translation
+  curY+=16;
+  ctx.strokeStyle='rgba(255,255,255,0.1)';
+  ctx.beginPath();
+  ctx.moveTo(W/2-120,curY);
+  ctx.lineTo(W/2+120,curY);
+  ctx.stroke();
+
+  // Indonesian Translation
+  curY+=52;
+  const idLen=currentAyat.text.length;
+  const idFontSize=idLen>220?27:idLen>130?30:33;
+  ctx.font=`italic 400 ${idFontSize}px "DM Sans", sans-serif`;
+  ctx.fillStyle='rgba(221,234,244,0.88)';
+  const idLines=wrapCanvasText(ctx,`"${currentAyat.text}"`,cardW-110).slice(0,6);
+  const idLineH=idFontSize*1.52;
+  for(const line of idLines){
+    ctx.fillText(line,W/2,curY);
+    curY+=idLineH;
+  }
+
+  // 5. Countdown Tiles (Ramadhan & Syawal)
+  const nowMs=Date.now();
+  const dRamadan=Math.max(0,Math.ceil((getTargetTs('ramadan')-nowMs)/86400000));
+  const dSyawal=Math.max(0,Math.ceil((getTargetTs('syawal')-nowMs)/86400000));
+
+  const boxY=1255,boxH=250,gap=32;
+  const boxW=(cardW-gap)/2;
+
+  // Box 1: Ramadhan
+  ctx.fillStyle='rgba(245,158,90,0.09)';
+  drawRoundedRect(ctx,cardX,boxY,boxW,boxH,32);
+  ctx.fill();
+  ctx.strokeStyle='rgba(245,158,90,0.28)';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  ctx.fillStyle='#f59e5a';
+  ctx.font='700 22px "DM Sans", sans-serif';
+  ctx.fillText('MENUJU RAMADHAN',cardX+boxW/2,boxY+56);
+
+  ctx.fillStyle='#ffffff';
+  ctx.font='700 84px "DM Sans", sans-serif';
+  ctx.fillText(String(dRamadan),cardX+boxW/2,boxY+152);
+
+  ctx.fillStyle='rgba(237,242,247,0.6)';
+  ctx.font='600 22px "DM Sans", sans-serif';
+  ctx.fillText('HARI LAGI · 1448 هـ',cardX+boxW/2,boxY+202);
+
+  // Box 2: Syawal
+  const box2X=cardX+boxW+gap;
+  ctx.fillStyle='rgba(94,196,180,0.09)';
+  drawRoundedRect(ctx,box2X,boxY,boxW,boxH,32);
+  ctx.fill();
+  ctx.strokeStyle='rgba(94,196,180,0.28)';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  ctx.fillStyle='#5ec4b4';
+  ctx.font='700 22px "DM Sans", sans-serif';
+  ctx.fillText('MENUJU SYAWAL',box2X+boxW/2,boxY+56);
+
+  ctx.fillStyle='#ffffff';
+  ctx.font='700 84px "DM Sans", sans-serif';
+  ctx.fillText(String(dSyawal),box2X+boxW/2,boxY+152);
+
+  ctx.fillStyle='rgba(237,242,247,0.6)';
+  ctx.font='600 22px "DM Sans", sans-serif';
+  ctx.fillText('HARI LAGI · 1448 هـ',box2X+boxW/2,boxY+202);
+
+  // 6. Web Branding Footer
+  ctx.fillStyle='#ffffff';
+  ctx.font='700 32px "DM Sans", sans-serif';
+  ctx.fillText('myCountdown',W/2,1655);
+
+  ctx.fillStyle='rgba(237,242,247,0.58)';
+  ctx.font='400 23px "DM Sans", sans-serif';
+  ctx.fillText('Dashboard Pengingat Ramadhan, Syawal & Jadwal Harian',W/2,1698);
+
+  const webUrl=(window.location.hostname&&window.location.hostname!=='localhost')
+    ?window.location.hostname
+    :'mycountdown.github.io';
+  ctx.fillStyle='#7fb3cf';
+  ctx.font='600 22px "DM Sans", sans-serif';
+  ctx.fillText(webUrl,W/2,1742);
+}
+
+async function openStoryModal(){
+  document.getElementById('modal-story').classList.remove('hidden');
+  await renderStoryCanvas();
+}
+
+async function refreshStoryAyat(){
+  await fetchRandomAyat();
+  await renderStoryCanvas();
+}
+
+function downloadStoryImage(){
+  const canvas=document.getElementById('story-canvas');
+  const link=document.createElement('a');
+  const tk=todayKey();
+  link.download=`myCountdown-Story-${tk}.png`;
+  link.href=canvas.toDataURL('image/png');
+  link.click();
 }
 
 // ============================================================
