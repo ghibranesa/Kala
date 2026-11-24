@@ -1199,8 +1199,28 @@ function updateNextEvent(){
   el.innerHTML=`<div class="ne-title">${escHtml(nx.name)}</div><div class="ne-countdown">${str}</div><div class="ne-date">${formatDateLong(nx.timestamp)}</div>`;
 }
 
+function updateTimerCountdowns(){
+  const now=Date.now();
+  const {totalSecs}=getWIBParts(new Date());
+  document.querySelectorAll('#custom-list .custom-item').forEach(row=>{
+    const id=row.dataset.id;
+    const t=state.timers.find(x=>x.id===id);
+    if(!t)return;
+    let remain='';
+    if(t.daily){
+      const pp=t.dailyTime.split(':').map(Number);let d=(pp[0]*3600+pp[1]*60)-totalSecs;if(d<0)d+=86400;
+      remain=`${pad(Math.floor(d/3600))}:${pad(Math.floor((d%3600)/60))}:${pad(d%60)}`;
+    }else{
+      const ms=t.timestamp-now;
+      if(ms<=0)remain='✓ Selesai';
+      else{const{d,h,m,s}=msToHMS(ms);remain=d>0?`${d}h ${pad(h)}:${pad(m)}`:`${pad(h)}:${pad(m)}:${pad(s)}`;}
+    }
+    const remEl=row.querySelector('.ci-remain');
+    if(remEl&&remEl.textContent!==remain)remEl.textContent=remain;
+  });
+}
+
 function deleteTimer(id){
-  if(!confirm('Hapus timer ini?'))return;
   state.timers=state.timers.filter(t=>t.id!==id);
   LS.set('timers',state.timers);
   renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
@@ -1418,9 +1438,13 @@ function applyState(){
 // ============================================================
 // TICK
 // ============================================================
+let lastSec=-1;
 function tick(){
+  const nowSec=Math.floor(Date.now()/1000);
+  if(nowSec===lastSec)return;
+  lastSec=nowSec;
   updateHeader();updateHeroCountdown();updatePulang();
-  renderTimerList();updateNextEvent();updateGauge();updateMetrics();
+  updateTimerCountdowns();updateNextEvent();updateGauge();updateMetrics();
 }
 
 // ============================================================
