@@ -89,7 +89,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 /* ===== LOGICAL ROW GRID ===== */
 .flow-sections{display:flex;flex-direction:column;gap:18px;}
 .flow-group{display:flex;flex-direction:column;gap:10px;}
-.flow-row{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:stretch;}
+.flow-row{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;align-items:stretch;}
 .flow-row-equal{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;}
 .flow-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
 
@@ -409,59 +409,58 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       </div>
 
       <div class="flow-row">
-        <!-- Kiri: Hero Countdown -->
-        <div class="glass-light hero-card">
-          <div class="hero-arabic-watermark" id="hero-watermark" aria-hidden="true">رَمَضَان</div>
-          <div class="hero-switcher">
-            <button id="sw-ramadan" class="active" onclick="setHeroMode('ramadan')">1 Ramadhan 1448H</button>
-            <button id="sw-syawal" onclick="setHeroMode('syawal')">1 Syawal 1448H</button>
-          </div>
-          <div class="hero-title-row">
-            <div>
-              <h2 id="hero-title">Menuju 1 Ramadhan 1448H</h2>
-              <div class="hero-target-date">
-                <span style="color:var(--text-muted)">Target:</span>
-                <span class="target-date-pill" id="hero-date-pill">8 Feb 2027</span>
-                <div class="day-adjust-btns">
-                  <button onclick="adjustDay(-1)">−</button>
-                  <span id="adj-label">±0 hr</span>
-                  <button onclick="adjustDay(+1)">+</button>
+        <!-- Kiri: Hero Countdown + Ringkasan 4 Metric -->
+        <div class="flow-col">
+          <div class="glass-light hero-card">
+            <div class="hero-arabic-watermark" id="hero-watermark" aria-hidden="true">رَمَضَان</div>
+            <div class="hero-switcher">
+              <button id="sw-ramadan" class="active" onclick="setHeroMode('ramadan')">1 Ramadhan 1448H</button>
+              <button id="sw-syawal" onclick="setHeroMode('syawal')">1 Syawal 1448H</button>
+            </div>
+            <div class="hero-title-row">
+              <div>
+                <h2 id="hero-title">Menuju 1 Ramadhan 1448H</h2>
+                <div class="hero-target-date">
+                  <span style="color:var(--text-muted)">Target:</span>
+                  <span class="target-date-pill" id="hero-date-pill">8 Feb 2027</span>
+                  <div class="day-adjust-btns">
+                    <button onclick="adjustDay(-1)">−</button>
+                    <span id="adj-label">±0 hr</span>
+                    <button onclick="adjustDay(+1)">+</button>
+                  </div>
                 </div>
               </div>
+              <button class="add-timer-btn" onclick="openAddModal()" title="Tambah Timer" id="btn-add-hero">
+                <span class="ic" id="ic-add-hero"></span>
+              </button>
             </div>
-            <button class="add-timer-btn" onclick="openAddModal()" title="Tambah Timer" id="btn-add-hero">
-              <span class="ic" id="ic-add-hero"></span>
-            </button>
+            <div class="countdown-digits">
+              <div class="digit-block"><div class="digit-num" id="cd-days">000</div><div class="digit-label">Hari</div></div>
+              <div class="digit-sep">:</div>
+              <div class="digit-block"><div class="digit-num" id="cd-hours">00</div><div class="digit-label">Jam</div></div>
+              <div class="digit-sep">:</div>
+              <div class="digit-block"><div class="digit-num" id="cd-mins">00</div><div class="digit-label">Menit</div></div>
+              <div class="digit-sep">:</div>
+              <div class="digit-block"><div class="digit-num" id="cd-secs">00</div><div class="digit-label">Detik</div></div>
+            </div>
+            <div class="progress-section">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                <span style="font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:0.6px;text-transform:uppercase;">Progres Perjalanan</span>
+              </div>
+              <div class="progress-row">
+                <span class="progress-label"><span class="ic" id="ic-moon" style="color:var(--dot-ramadan)"></span>Ramadhan</span>
+                <div class="progress-track"><div class="progress-fill ramadan" id="prog-ramadan" style="width:0%"></div></div>
+                <span class="progress-pct" id="prog-ramadan-pct">0%</span>
+              </div>
+              <div class="progress-row">
+                <span class="progress-label"><span class="ic" id="ic-star" style="color:var(--dot-syawal)"></span>Syawal</span>
+                <div class="progress-track"><div class="progress-fill syawal" id="prog-syawal" style="width:0%"></div></div>
+                <span class="progress-pct" id="prog-syawal-pct">0%</span>
+              </div>
+            </div>
           </div>
-          <div class="countdown-digits">
-            <div class="digit-block"><div class="digit-num" id="cd-days">000</div><div class="digit-label">Hari</div></div>
-            <div class="digit-sep">:</div>
-            <div class="digit-block"><div class="digit-num" id="cd-hours">00</div><div class="digit-label">Jam</div></div>
-            <div class="digit-sep">:</div>
-            <div class="digit-block"><div class="digit-num" id="cd-mins">00</div><div class="digit-label">Menit</div></div>
-            <div class="digit-sep">:</div>
-            <div class="digit-block"><div class="digit-num" id="cd-secs">00</div><div class="digit-label">Detik</div></div>
-          </div>
-          <div class="progress-section">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
-              <span style="font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:0.6px;text-transform:uppercase;">Progres Perjalanan</span>
-            </div>
-            <div class="progress-row">
-              <span class="progress-label"><span class="ic" id="ic-moon" style="color:var(--dot-ramadan)"></span>Ramadhan</span>
-              <div class="progress-track"><div class="progress-fill ramadan" id="prog-ramadan" style="width:0%"></div></div>
-              <span class="progress-pct" id="prog-ramadan-pct">0%</span>
-            </div>
-            <div class="progress-row">
-              <span class="progress-label"><span class="ic" id="ic-star" style="color:var(--dot-syawal)"></span>Syawal</span>
-              <div class="progress-track"><div class="progress-fill syawal" id="prog-syawal" style="width:0%"></div></div>
-              <span class="progress-pct" id="prog-syawal-pct">0%</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Kanan: Ringkasan + Kalender -->
-        <div class="flow-col">
-          <div class="glass-light metrics-strip">
+          <div class="glass-light metrics-strip" style="flex:1;">
             <div class="metric-tile">
               <div class="m-val" id="m-hari-ramadan">—</div>
               <div class="m-label"><span class="ic" id="ic-m-ramadan" style="color:var(--text-muted)"></span>Hari ke Ramadhan</div>
@@ -479,7 +478,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
               <div class="m-label"><span class="ic" id="ic-clock-m" style="color:var(--text-muted)"></span>Target Pulang</div>
             </div>
           </div>
+        </div>
 
+        <!-- Kanan: Kalender -->
+        <div class="flow-col">
           <div class="glass-dark-2 cal-card" style="flex:1;">
             <div class="cal-card-header">
               <div class="cal-card-title" id="cal-card-title">
