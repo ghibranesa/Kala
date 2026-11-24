@@ -573,6 +573,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         </div>
 
         <div class="add-tab hidden" id="add-tab">
+          <div class="form-mode-switcher">
+            <button class="form-mode-btn active" id="fm-specific" onclick="setFormMode('specific')">Tanggal &amp; Jam</button>
+            <button class="form-mode-btn" id="fm-daily" onclick="setFormMode('daily')">Harian / Berulang</button>
+          </div>
           <div class="form-fields">
             <div>
               <label class="form-field-label">Nama Event</label>
@@ -583,6 +587,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
                 <div><label class="form-field-label">Tanggal</label><input class="form-input" id="f-date" type="date"></div>
                 <div><label class="form-field-label">Jam</label><input class="form-input" id="f-time" type="time" value="08:00"></div>
               </div>
+            </div>
+            <div id="f-daily-fields" class="hidden">
+              <label class="form-field-label">Jam Setiap Hari</label>
+              <input class="form-input" id="f-daily-time" type="time" value="08:00">
             </div>
             <button class="btn-create" onclick="createTimer()">Buat Timer →</button>
           </div>
@@ -657,6 +665,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <div class="modal-overlay hidden" id="modal-timer">
   <div class="modal-box">
     <div class="modal-title" id="modal-timer-title"><span class="ic" id="ic-m-timer"></span> Tambah Timer</div>
+    <div class="form-mode-switcher" style="background:rgba(79,130,160,0.12);">
+      <button type="button" class="form-mode-btn active" id="mt-mode-specific" style="color:var(--text-primary);" onclick="setModalTimerMode('specific')">Tanggal &amp; Jam</button>
+      <button type="button" class="form-mode-btn" id="mt-mode-daily" style="color:var(--text-secondary);" onclick="setModalTimerMode('daily')">Harian / Berulang</button>
+    </div>
     <div>
       <label class="modal-label">Nama Event</label>
       <input class="modal-input" id="mt-name" type="text" placeholder="Nama event…">
@@ -664,6 +676,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div id="mt-specific-wrap">
       <label class="modal-label">Tanggal &amp; Jam Target</label>
       <input class="modal-input" id="mt-datetime" type="datetime-local">
+    </div>
+    <div id="mt-daily-wrap" class="hidden">
+      <label class="modal-label">Jam Setiap Hari</label>
+      <input class="modal-input" id="mt-daily-time" type="time" value="08:00">
     </div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal('modal-timer')">Batal</button>
@@ -1190,6 +1206,14 @@ function deleteTimer(id){
   renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
 }
 
+function setModalTimerMode(mode){
+  const isDaily=mode==='daily';
+  document.getElementById('mt-mode-specific').classList.toggle('active',!isDaily);
+  document.getElementById('mt-mode-daily').classList.toggle('active',isDaily);
+  document.getElementById('mt-specific-wrap').classList.toggle('hidden',isDaily);
+  document.getElementById('mt-daily-wrap').classList.toggle('hidden',!isDaily);
+}
+
 function openAddModal(prefillDate){
   state.editingId=null;
   document.getElementById('modal-timer-title').innerHTML='';
@@ -1199,6 +1223,8 @@ function openAddModal(prefillDate){
   const now=new Date();const off=now.getTimezoneOffset();
   const local=new Date(now.getTime()-off*60000);
   document.getElementById('mt-datetime').value=prefillDate?prefillDate+'T08:00':local.toISOString().slice(0,16);
+  document.getElementById('mt-daily-time').value='08:00';
+  setModalTimerMode('specific');
   document.getElementById('mt-save-btn').textContent='Tambah';
   document.getElementById('modal-timer').classList.remove('hidden');
 }
@@ -1210,9 +1236,15 @@ function openEditTimer(id){
   document.getElementById('modal-timer-title').appendChild(mkIcon('edit',15));
   document.getElementById('modal-timer-title').appendChild(document.createTextNode(' Edit Timer'));
   document.getElementById('mt-name').value=t.name;
-  const d=new Date(t.timestamp||Date.now());const off=d.getTimezoneOffset();
-  const local=new Date(d.getTime()-off*60000);
-  document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
+  if(t.daily){
+    setModalTimerMode('daily');
+    document.getElementById('mt-daily-time').value=t.dailyTime||'08:00';
+  }else{
+    setModalTimerMode('specific');
+    const d=new Date(t.timestamp||Date.now());const off=d.getTimezoneOffset();
+    const local=new Date(d.getTime()-off*60000);
+    document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
+  }
   document.getElementById('mt-save-btn').textContent='Simpan';
   document.getElementById('modal-timer').classList.remove('hidden');
 }
@@ -1220,10 +1252,17 @@ function openEditTimer(id){
 function saveTimer(){
   const name=document.getElementById('mt-name').value.trim();
   if(!name){document.getElementById('mt-name').focus();return;}
-  const dt=document.getElementById('mt-datetime').value;
-  if(!dt){document.getElementById('mt-datetime').focus();return;}
-  const ts=new Date(dt).getTime();if(isNaN(ts))return;
-  const entry={name,timestamp:ts,id:state.editingId||genId()};
+  let entry;
+  const isDaily=!document.getElementById('mt-daily-wrap').classList.contains('hidden');
+  if(isDaily){
+    const dailyTime=document.getElementById('mt-daily-time').value||'08:00';
+    entry={name,daily:true,dailyTime,id:state.editingId||genId()};
+  }else{
+    const dt=document.getElementById('mt-datetime').value;
+    if(!dt){document.getElementById('mt-datetime').focus();return;}
+    const ts=new Date(dt).getTime();if(isNaN(ts))return;
+    entry={name,timestamp:ts,id:state.editingId||genId()};
+  }
   if(state.editingId){
     const idx=state.timers.findIndex(t=>t.id===state.editingId);if(idx>=0)state.timers[idx]=entry;
   }else{
