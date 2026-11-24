@@ -86,10 +86,12 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .status-badge.libur{background:var(--status-libur-bg);color:var(--status-libur-c);border-color:var(--status-libur-b);}
 .status-badge.offduty{background:var(--status-offduty-bg);color:var(--status-offduty-c);border-color:var(--status-offduty-b);}
 
-/* ===== MAIN GRID ===== */
-.main-grid{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto;gap:14px;}
-.col-left{grid-column:1;display:flex;flex-direction:column;gap:14px;}
-.col-right{grid-column:2;display:flex;flex-direction:column;gap:14px;}
+/* ===== LOGICAL ROW GRID ===== */
+.flow-sections{display:flex;flex-direction:column;gap:18px;}
+.flow-group{display:flex;flex-direction:column;gap:10px;}
+.flow-row{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:stretch;}
+.flow-row-equal{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;}
+.flow-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
 
 /* ===== HERO CARD ===== */
 .hero-card{padding:24px 26px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;}
@@ -312,6 +314,32 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
   .ayat-actions{justify-content:flex-end;margin-top:4px;padding-top:8px;border-top:1px solid rgba(79,130,160,0.12);}
 }
 
+/* ===== TO-DO LIST CARD ===== */
+.todo-card{padding:18px 20px;display:flex;flex-direction:column;gap:11px;flex:1;}
+.todo-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.todo-title{font-size:13px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:7px;}
+.todo-count{font-size:10px;font-weight:700;color:var(--accent);background:rgba(79,130,160,0.12);padding:2px 8px;border-radius:var(--r-pill);}
+.todo-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:260px;padding-right:2px;}
+.todo-list::-webkit-scrollbar{width:3px;}
+.todo-list::-webkit-scrollbar-thumb{background:rgba(79,130,160,0.3);border-radius:3px;}
+.todo-item{display:flex;align-items:flex-start;gap:9px;background:rgba(255,255,255,0.42);border:1px solid rgba(255,255,255,0.48);border-radius:12px;padding:8px 10px;transition:all 0.15s;}
+.todo-item:hover{background:rgba(255,255,255,0.58);}
+.todo-item.done{opacity:0.58;}
+.todo-item.done .todo-name{text-decoration:line-through;color:var(--text-muted);}
+.todo-check{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--accent);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:white;transition:all 0.15s;padding:0;}
+.todo-item.done .todo-check{background:var(--accent-teal);border-color:var(--accent-teal);}
+.todo-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.todo-name{font-size:12.5px;font-weight:600;color:var(--text-primary);line-height:1.35;word-break:break-word;}
+.todo-meta{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.todo-meta.overdue{color:var(--accent-rose);font-weight:700;}
+
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  .todo-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+  .todo-item:hover{background:rgba(255,255,255,0.09);}
+}}
+:root[data-theme="dark"] .todo-item{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);}
+:root[data-theme="dark"] .todo-item:hover{background:rgba(255,255,255,0.09);}
+
 /* Reset bar */
 .reset-bar{display:flex;align-items:center;justify-content:flex-end;padding:0 4px;}
 .btn-reset{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
@@ -319,8 +347,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:860px){
-  .main-grid{grid-template-columns:1fr;}
-  .col-left,.col-right{grid-column:1;}
+  .flow-row,.flow-row-equal{grid-template-columns:1fr;}
 }
 @media(max-width:540px){
   .digit-num{font-size:40px;} .digit-sep{font-size:28px;padding-bottom:14px;}
@@ -371,75 +398,160 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     </div>
   </div>
 
-  <!-- MAIN GRID -->
-  <div class="main-grid">
+  <!-- LOGICAL FLOW SECTIONS -->
+  <div class="flow-sections">
 
-    <!-- LEFT COLUMN -->
-    <div class="col-left">
-
-      <!-- Section: Countdown Utama -->
+    <!-- TAHAP 1: TARGET UTAMA & KALENDER -->
+    <section class="flow-group">
       <div class="section-label">
-        <span class="ic" id="ic-sl-1"></span> Countdown Utama
+        <span class="ic" id="ic-sl-1"></span> 1 · Target Utama &amp; Kalender
         <div class="sl-line"></div>
       </div>
 
-      <div class="glass-light hero-card">
-        <div class="hero-arabic-watermark" id="hero-watermark" aria-hidden="true">رَمَضَان</div>
-        <div class="hero-switcher">
-          <button id="sw-ramadan" class="active" onclick="setHeroMode('ramadan')">1 Ramadhan 1448H</button>
-          <button id="sw-syawal" onclick="setHeroMode('syawal')">1 Syawal 1448H</button>
+      <div class="flow-row">
+        <!-- Kiri: Hero Countdown -->
+        <div class="glass-light hero-card">
+          <div class="hero-arabic-watermark" id="hero-watermark" aria-hidden="true">رَمَضَان</div>
+          <div class="hero-switcher">
+            <button id="sw-ramadan" class="active" onclick="setHeroMode('ramadan')">1 Ramadhan 1448H</button>
+            <button id="sw-syawal" onclick="setHeroMode('syawal')">1 Syawal 1448H</button>
+          </div>
+          <div class="hero-title-row">
+            <div>
+              <h2 id="hero-title">Menuju 1 Ramadhan 1448H</h2>
+              <div class="hero-target-date">
+                <span style="color:var(--text-muted)">Target:</span>
+                <span class="target-date-pill" id="hero-date-pill">8 Feb 2027</span>
+                <div class="day-adjust-btns">
+                  <button onclick="adjustDay(-1)">−</button>
+                  <span id="adj-label">±0 hr</span>
+                  <button onclick="adjustDay(+1)">+</button>
+                </div>
+              </div>
+            </div>
+            <button class="add-timer-btn" onclick="openAddModal()" title="Tambah Timer" id="btn-add-hero">
+              <span class="ic" id="ic-add-hero"></span>
+            </button>
+          </div>
+          <div class="countdown-digits">
+            <div class="digit-block"><div class="digit-num" id="cd-days">000</div><div class="digit-label">Hari</div></div>
+            <div class="digit-sep">:</div>
+            <div class="digit-block"><div class="digit-num" id="cd-hours">00</div><div class="digit-label">Jam</div></div>
+            <div class="digit-sep">:</div>
+            <div class="digit-block"><div class="digit-num" id="cd-mins">00</div><div class="digit-label">Menit</div></div>
+            <div class="digit-sep">:</div>
+            <div class="digit-block"><div class="digit-num" id="cd-secs">00</div><div class="digit-label">Detik</div></div>
+          </div>
+          <div class="progress-section">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+              <span style="font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:0.6px;text-transform:uppercase;">Progres Perjalanan</span>
+            </div>
+            <div class="progress-row">
+              <span class="progress-label"><span class="ic" id="ic-moon" style="color:var(--dot-ramadan)"></span>Ramadhan</span>
+              <div class="progress-track"><div class="progress-fill ramadan" id="prog-ramadan" style="width:0%"></div></div>
+              <span class="progress-pct" id="prog-ramadan-pct">0%</span>
+            </div>
+            <div class="progress-row">
+              <span class="progress-label"><span class="ic" id="ic-star" style="color:var(--dot-syawal)"></span>Syawal</span>
+              <div class="progress-track"><div class="progress-fill syawal" id="prog-syawal" style="width:0%"></div></div>
+              <span class="progress-pct" id="prog-syawal-pct">0%</span>
+            </div>
+          </div>
         </div>
-        <div class="hero-title-row">
-          <div>
-            <h2 id="hero-title">Menuju 1 Ramadhan 1448H</h2>
-            <div class="hero-target-date">
-              <span style="color:var(--text-muted)">Target:</span>
-              <span class="target-date-pill" id="hero-date-pill">8 Feb 2027</span>
-              <div class="day-adjust-btns">
-                <button onclick="adjustDay(-1)">−</button>
-                <span id="adj-label">±0 hr</span>
-                <button onclick="adjustDay(+1)">+</button>
+
+        <!-- Kanan: Ringkasan + Kalender -->
+        <div class="flow-col">
+          <div class="glass-light metrics-strip">
+            <div class="metric-tile">
+              <div class="m-val" id="m-hari-ramadan">—</div>
+              <div class="m-label"><span class="ic" id="ic-m-ramadan" style="color:var(--text-muted)"></span>Hari ke Ramadhan</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-val" id="m-hari-syawal">—</div>
+              <div class="m-label"><span class="ic" id="ic-m-syawal" style="color:var(--text-muted)"></span>Hari ke Syawal</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-val" id="m-active">0</div>
+              <div class="m-label"><span class="ic" id="ic-m-active" style="color:var(--text-muted)"></span>Event &amp; Tugas</div>
+            </div>
+            <div class="metric-tile">
+              <div class="m-val" id="m-target">—</div>
+              <div class="m-label"><span class="ic" id="ic-clock-m" style="color:var(--text-muted)"></span>Target Pulang</div>
+            </div>
+          </div>
+
+          <div class="glass-dark-2 cal-card" style="flex:1;">
+            <div class="cal-card-header">
+              <div class="cal-card-title" id="cal-card-title">
+                <span class="ic" id="ic-cal-title"></span> Kalender
+              </div>
+              <div class="tab-icon-switcher">
+                <button class="tab-icon-btn active" id="tab-cal-btn" onclick="switchCalTab('cal')" title="Kalender">
+                  <span class="ic" id="ic-tab-cal"></span>
+                </button>
+                <button class="tab-icon-btn" id="tab-add-btn" onclick="switchCalTab('add')" title="Tambah Timer">
+                  <span class="ic" id="ic-tab-add"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="cal-tab" id="cal-tab">
+              <div class="cal-nav">
+                <button class="cal-nav-btn" onclick="calNav(-1)" id="btn-cal-prev"><span class="ic" id="ic-cal-prev"></span></button>
+                <span class="cal-month-label" id="cal-month-label">November 2026</span>
+                <button class="cal-nav-btn" onclick="calNav(+1)" id="btn-cal-next"><span class="ic" id="ic-cal-next"></span></button>
+              </div>
+              <div class="cal-grid" id="cal-grid"></div>
+              <div class="cal-detail" id="cal-detail">
+                <div class="cal-detail-title">Klik tanggal untuk lihat detail</div>
+              </div>
+              <div class="cal-legend">
+                <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-libur)"></div>Libur</div>
+                <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-peringatan)"></div>Peringatan</div>
+                <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-ramadan)"></div>Ramadhan</div>
+                <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-syawal)"></div>Syawal</div>
+                <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-custom)"></div>Custom</div>
+              </div>
+            </div>
+
+            <div class="add-tab hidden" id="add-tab">
+              <div class="form-mode-switcher">
+                <button class="form-mode-btn active" id="fm-specific" onclick="setFormMode('specific')">Tanggal &amp; Jam</button>
+                <button class="form-mode-btn" id="fm-daily" onclick="setFormMode('daily')">Harian / Berulang</button>
+              </div>
+              <div class="form-fields">
+                <div>
+                  <label class="form-field-label">Nama Event</label>
+                  <input class="form-input" id="f-name" type="text" placeholder="Contoh: Deadline Laporan…">
+                </div>
+                <div id="f-specific-fields">
+                  <div class="form-row-2">
+                    <div><label class="form-field-label">Tanggal</label><input class="form-input" id="f-date" type="date"></div>
+                    <div><label class="form-field-label">Jam</label><input class="form-input" id="f-time" type="time" value="08:00"></div>
+                  </div>
+                </div>
+                <div id="f-daily-fields" class="hidden">
+                  <label class="form-field-label">Jam Setiap Hari</label>
+                  <input class="form-input" id="f-daily-time" type="time" value="08:00">
+                </div>
+                <button class="btn-create" onclick="createTimer()">Buat Timer →</button>
               </div>
             </div>
           </div>
-          <button class="add-timer-btn" onclick="openAddModal()" title="Tambah Timer" id="btn-add-hero">
-            <span class="ic" id="ic-add-hero"></span>
-          </button>
-        </div>
-        <div class="countdown-digits">
-          <div class="digit-block"><div class="digit-num" id="cd-days">000</div><div class="digit-label">Hari</div></div>
-          <div class="digit-sep">:</div>
-          <div class="digit-block"><div class="digit-num" id="cd-hours">00</div><div class="digit-label">Jam</div></div>
-          <div class="digit-sep">:</div>
-          <div class="digit-block"><div class="digit-num" id="cd-mins">00</div><div class="digit-label">Menit</div></div>
-          <div class="digit-sep">:</div>
-          <div class="digit-block"><div class="digit-num" id="cd-secs">00</div><div class="digit-label">Detik</div></div>
-        </div>
-        <div class="progress-section">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
-            <span style="font-size:10.5px;font-weight:700;color:var(--text-muted);letter-spacing:0.6px;text-transform:uppercase;">Progres Perjalanan</span>
-          </div>
-          <div class="progress-row">
-            <span class="progress-label"><span class="ic" id="ic-moon" style="color:var(--dot-ramadan)"></span>Ramadhan</span>
-            <div class="progress-track"><div class="progress-fill ramadan" id="prog-ramadan" style="width:0%"></div></div>
-            <span class="progress-pct" id="prog-ramadan-pct">0%</span>
-          </div>
-          <div class="progress-row">
-            <span class="progress-label"><span class="ic" id="ic-star" style="color:var(--dot-syawal)"></span>Syawal</span>
-            <div class="progress-track"><div class="progress-fill syawal" id="prog-syawal" style="width:0%"></div></div>
-            <span class="progress-pct" id="prog-syawal-pct">0%</span>
-          </div>
         </div>
       </div>
+    </section>
 
-      <!-- Section: Jam Pulang & Event -->
+    <!-- TAHAP 2: OPERASIONAL & SHIFT HARI INI -->
+    <section class="flow-group">
       <div class="section-label">
-        <span class="ic" id="ic-sl-2"></span> Harian
+        <span class="ic" id="ic-sl-2"></span> 2 · Jadwal Kerja Hari Ini
         <div class="sl-line"></div>
       </div>
 
-      <div class="bottom-left-row">
-        <div class="glass-dark card-pulang">
+      <div class="flow-row-equal">
+        <!-- Kiri: Jam Pulang -->
+        <div class="glass-dark card-pulang" style="justify-content:space-between;">
           <div class="cp-header">
             <span class="cp-label-top">Hitung Mundur</span>
             <button class="cp-edit-btn" onclick="openEditPulang()" title="Atur jam kerja" id="btn-edit-pulang">
@@ -447,193 +559,110 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
             </button>
           </div>
           <div class="cp-title"><span class="ic" id="ic-home"></span> Jam Pulang</div>
-          <div id="pulang-digits">
-            <div class="cp-digits">
-              <span class="cp-num">00</span><span class="cp-sep">:</span>
-              <span class="cp-num">00</span><span class="cp-sep">:</span>
-              <span class="cp-num">00</span>
-            </div>
-            <div class="cp-unit-row">
-              <span class="cp-unit">Jam</span><span class="cp-unit">Menit</span><span class="cp-unit">Detik</span>
-            </div>
-          </div>
+          <div id="pulang-digits"></div>
         </div>
 
-        <div class="glass-light next-event-card">
-          <div class="ne-header">
-            <span class="ic" id="ic-pin" style="color:var(--text-muted)"></span>
-            <span class="ne-label">Event Terdekat</span>
-          </div>
-          <div id="ne-content"><div class="ne-empty">Belum ada event mendatang</div></div>
-        </div>
-      </div>
-
-      <!-- Section: Custom Timers -->
-      <div class="section-label">
-        <span class="ic" id="ic-sl-3"></span> Custom Timers
-        <div class="sl-line"></div>
-      </div>
-
-      <div class="glass-light timers-section">
-        <div class="timers-section-header">
-          <div class="search-bar" style="flex:1;">
-            <span class="ic" id="ic-search" style="color:var(--text-muted)"></span>
-            <input type="search" id="search-input" placeholder="Cari timer…" oninput="filterTimers()">
-          </div>
-        </div>
-        <div class="custom-list" id="custom-list">
-          <div class="list-empty">Belum ada custom timer. Klik + untuk tambah.</div>
-        </div>
-      </div>
-
-    </div><!-- /col-left -->
-
-    <!-- RIGHT COLUMN -->
-    <div class="col-right">
-
-      <!-- Section: Metrik -->
-      <div class="section-label">
-        <span class="ic" id="ic-sl-4"></span> Ringkasan
-        <div class="sl-line"></div>
-      </div>
-
-      <div class="glass-light metrics-strip">
-        <div class="metric-tile">
-          <div class="m-val" id="m-hari-ramadan">—</div>
-          <div class="m-label"><span class="ic" id="ic-m-ramadan" style="color:var(--text-muted)"></span>Hari ke Ramadhan</div>
-        </div>
-        <div class="metric-tile">
-          <div class="m-val" id="m-hari-syawal">—</div>
-          <div class="m-label"><span class="ic" id="ic-m-syawal" style="color:var(--text-muted)"></span>Hari ke Syawal</div>
-        </div>
-        <div class="metric-tile">
-          <div class="m-val" id="m-active">0</div>
-          <div class="m-label"><span class="ic" id="ic-m-active" style="color:var(--text-muted)"></span>Event Aktif</div>
-        </div>
-        <div class="metric-tile">
-          <div class="m-val" id="m-target">18:00</div>
-          <div class="m-label"><span class="ic" id="ic-clock-m" style="color:var(--text-muted)"></span>Target Harian</div>
-        </div>
-      </div>
-
-      <!-- Section: Shift Kerja -->
-      <div class="section-label">
-        <span class="ic" id="ic-sl-5"></span> Shift Kerja
-        <div class="sl-line"></div>
-      </div>
-
-      <div class="glass-light gauge-card">
-        <div class="gauge-header">
-          <span class="gauge-title">Progres Shift</span>
-          <button class="gauge-edit-btn" onclick="openEditPulang()">
-            <span class="ic" id="ic-gauge-edit"></span> Atur Jam
-          </button>
-        </div>
-        <div class="gauge-body">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-            <div class="gauge-svg-wrap">
-              <svg viewBox="0 0 150 84" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#4f82a0"/>
-                    <stop offset="100%" style="stop-color:#3ea494"/>
-                  </linearGradient>
-                </defs>
-                <path id="gauge-track" d="" fill="none" stroke="rgba(79,130,160,0.15)" stroke-width="10" stroke-linecap="round"/>
-                <path id="gauge-fill"  d="" fill="none" stroke="url(#gaugeGrad)"       stroke-width="10" stroke-linecap="round"/>
-                <g id="gauge-ticks"></g>
-              </svg>
-              <div class="gauge-center-text">
-                <div class="gauge-pct-num" id="gauge-pct-num">0%</div>
-                <div class="gauge-pct-label">selesai</div>
-              </div>
-            </div>
-            <div class="gauge-time-row">
-              <span id="gauge-label-start">08:00</span>
-              <span id="gauge-label-end">18:00</span>
-            </div>
-          </div>
-          <div class="gauge-info">
-            <div class="gauge-stat">Mulai: <strong id="gi-start">08:00</strong></div>
-            <div class="gauge-stat">Selesai: <strong id="gi-end">18:00</strong></div>
-            <div class="gauge-stat">Pulang: <strong id="gi-pulang">18:00</strong></div>
-            <div class="gauge-stat" id="gi-remaining-row">Sisa: <strong id="gi-remaining">—</strong></div>
-          </div>
-        </div>
-        <!-- Hidden sync inputs -->
-        <div class="gauge-hidden">
-          <input type="time" id="gauge-start" value="08:00" onchange="saveShiftSettings()">
-          <input type="time" id="gauge-end"   value="18:00" onchange="saveShiftSettings()">
-        </div>
-      </div>
-
-      <!-- Section: Kalender -->
-      <div class="section-label">
-        <span class="ic" id="ic-sl-6"></span> Kalender
-        <div class="sl-line"></div>
-      </div>
-
-      <div class="glass-dark-2 cal-card">
-        <div class="cal-card-header">
-          <div class="cal-card-title" id="cal-card-title">
-            <span class="ic" id="ic-cal-title"></span> Kalender
-          </div>
-          <div class="tab-icon-switcher">
-            <button class="tab-icon-btn active" id="tab-cal-btn" onclick="switchCalTab('cal')" title="Kalender">
-              <span class="ic" id="ic-tab-cal"></span>
-            </button>
-            <button class="tab-icon-btn" id="tab-add-btn" onclick="switchCalTab('add')" title="Tambah Timer">
-              <span class="ic" id="ic-tab-add"></span>
+        <!-- Kanan: Progres Shift -->
+        <div class="glass-light gauge-card" style="justify-content:space-between;">
+          <div class="gauge-header">
+            <span class="gauge-title">Progres Shift</span>
+            <button class="gauge-edit-btn" onclick="openEditPulang()">
+              <span class="ic" id="ic-gauge-edit"></span> Atur Jam
             </button>
           </div>
-        </div>
-
-        <div class="cal-tab" id="cal-tab">
-          <div class="cal-nav">
-            <button class="cal-nav-btn" onclick="calNav(-1)" id="btn-cal-prev"><span class="ic" id="ic-cal-prev"></span></button>
-            <span class="cal-month-label" id="cal-month-label">November 2026</span>
-            <button class="cal-nav-btn" onclick="calNav(+1)" id="btn-cal-next"><span class="ic" id="ic-cal-next"></span></button>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
-          <div class="cal-detail" id="cal-detail">
-            <div class="cal-detail-title">Klik tanggal untuk lihat detail</div>
-          </div>
-          <div class="cal-legend">
-            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-libur)"></div>Libur nasional</div>
-            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-peringatan)"></div>Hari peringatan</div>
-            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-ramadan)"></div>Ramadhan</div>
-            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-syawal)"></div>Syawal</div>
-            <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--dot-custom)"></div>Custom</div>
-          </div>
-        </div>
-
-        <div class="add-tab hidden" id="add-tab">
-          <div class="form-mode-switcher">
-            <button class="form-mode-btn active" id="fm-specific" onclick="setFormMode('specific')">Tanggal &amp; Jam</button>
-            <button class="form-mode-btn" id="fm-daily" onclick="setFormMode('daily')">Harian / Berulang</button>
-          </div>
-          <div class="form-fields">
-            <div>
-              <label class="form-field-label">Nama Event</label>
-              <input class="form-input" id="f-name" type="text" placeholder="Contoh: Deadline Laporan…">
-            </div>
-            <div id="f-specific-fields">
-              <div class="form-row-2">
-                <div><label class="form-field-label">Tanggal</label><input class="form-input" id="f-date" type="date"></div>
-                <div><label class="form-field-label">Jam</label><input class="form-input" id="f-time" type="time" value="08:00"></div>
+          <div class="gauge-body">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="gauge-svg-wrap">
+                <svg viewBox="0 0 150 84" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#4f82a0"/>
+                      <stop offset="100%" style="stop-color:#3ea494"/>
+                    </linearGradient>
+                  </defs>
+                  <path id="gauge-track" d="" fill="none" stroke="rgba(79,130,160,0.15)" stroke-width="10" stroke-linecap="round"/>
+                  <path id="gauge-fill"  d="" fill="none" stroke="url(#gaugeGrad)"       stroke-width="10" stroke-linecap="round"/>
+                  <g id="gauge-ticks"></g>
+                </svg>
+                <div class="gauge-center-text">
+                  <div class="gauge-pct-num" id="gauge-pct-num">0%</div>
+                  <div class="gauge-pct-label">selesai</div>
+                </div>
+              </div>
+              <div class="gauge-time-row">
+                <span id="gauge-label-start">--:--</span>
+                <span id="gauge-label-end">--:--</span>
               </div>
             </div>
-            <div id="f-daily-fields" class="hidden">
-              <label class="form-field-label">Jam Setiap Hari</label>
-              <input class="form-input" id="f-daily-time" type="time" value="08:00">
+            <div class="gauge-info">
+              <div class="gauge-stat">Mulai: <strong id="gi-start">Belum diatur</strong></div>
+              <div class="gauge-stat">Selesai: <strong id="gi-end">Belum diatur</strong></div>
+              <div class="gauge-stat">Pulang: <strong id="gi-pulang">Belum diatur</strong></div>
+              <div class="gauge-stat" id="gi-remaining-row" style="display:none;">Sisa: <strong id="gi-remaining">—</strong></div>
             </div>
-            <button class="btn-create" onclick="createTimer()">Buat Timer →</button>
+          </div>
+          <div class="gauge-hidden">
+            <input type="time" id="gauge-start" onchange="saveShiftSettings()">
+            <input type="time" id="gauge-end"   onchange="saveShiftSettings()">
           </div>
         </div>
       </div>
+    </section>
 
-    </div><!-- /col-right -->
-  </div><!-- /main-grid -->
+    <!-- TAHAP 3: TO-DO LIST & CUSTOM TIMERS -->
+    <section class="flow-group">
+      <div class="section-label">
+        <span class="ic" id="ic-sl-3"></span> 3 · Tugas &amp; Timer Personal
+        <div class="sl-line"></div>
+      </div>
+
+      <div class="flow-row-equal">
+        <!-- Kiri: To-Do List -->
+        <div class="glass-light todo-card">
+          <div class="todo-header">
+            <div class="todo-title">
+              <span class="ic" id="ic-todo-title" style="color:var(--accent)"></span>
+              <span>To-Do List</span>
+              <span class="todo-count" id="todo-count">0/0</span>
+            </div>
+            <button class="gauge-edit-btn" onclick="openTodoModal()">
+              <span class="ic" id="ic-todo-add"></span> Tambah Tugas
+            </button>
+          </div>
+          <div class="todo-list" id="todo-list">
+            <div class="list-empty">Belum ada tugas. Klik "+ Tambah Tugas" untuk mulai.</div>
+          </div>
+        </div>
+
+        <!-- Kanan: Event Terdekat & Custom Timers -->
+        <div class="flow-col">
+          <div class="glass-light next-event-card">
+            <div class="ne-header">
+              <span class="ic" id="ic-pin" style="color:var(--text-muted)"></span>
+              <span class="ne-label">Event Terdekat</span>
+            </div>
+            <div id="ne-content"><div class="ne-empty">Belum ada event mendatang</div></div>
+          </div>
+
+          <div class="glass-light timers-section" style="flex:1;">
+            <div class="timers-section-header" style="gap:8px;">
+              <div class="search-bar" style="flex:1;">
+                <span class="ic" id="ic-search" style="color:var(--text-muted)"></span>
+                <input type="search" id="search-input" placeholder="Cari timer…" oninput="filterTimers()">
+              </div>
+              <button class="gauge-edit-btn" onclick="openAddModal()" style="padding:6px 11px;">
+                <span class="ic" id="ic-timer-add-btn"></span> Timer
+              </button>
+            </div>
+            <div class="custom-list" id="custom-list">
+              <div class="list-empty">Belum ada custom timer. Klik "+ Timer" untuk tambah.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /flow-sections -->
 
   <div class="reset-bar">
     <button class="btn-reset" onclick="resetAll()">
@@ -723,6 +752,26 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
 </div>
 
+<!-- MODAL: Add / Edit To-Do -->
+<div class="modal-overlay hidden" id="modal-todo">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-todo-title"><span class="ic" id="ic-m-todo"></span> Tambah Tugas</div>
+    <div>
+      <label class="modal-label">Nama Tugas</label>
+      <input class="modal-input" id="td-name" type="text" placeholder="Contoh: Kirim laporan mingguan…">
+    </div>
+    <div>
+      <label class="modal-label">Deadline Tanggal &amp; Jam (Opsional)</label>
+      <input class="modal-input" id="td-deadline" type="datetime-local">
+      <div class="modal-hint" style="margin-top:5px;">Kosongkan jika tugas tidak memiliki batas waktu tertentu.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal('modal-todo')">Batal</button>
+      <button class="modal-btn primary" id="td-save-btn" onclick="saveTodo()">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Instagram Story Generator (9:16) -->
 <div class="modal-overlay hidden" id="modal-story">
   <div class="modal-box" style="max-width:360px;align-items:center;">
@@ -775,6 +824,8 @@ function mkIcon(name,size=14){
     'bar-chart':['M12 20V10','M18 20V4','M6 20v-4'],
     layers:['M12 2l8 4-8 4-8-4z','M4 12l8 4 8-4','M4 16l8 4 8-4'],
     share:['M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8','M16 6l-4-4-4 4','M12 2v13'],
+    'check-square':['M9 11l3 3L22 4','M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
+    check:['M20 6L9 17l-5-5'],
   };
   const d=paths[name]||paths['clock'];
   d.forEach(p=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',p);svg.appendChild(path);});
@@ -817,6 +868,10 @@ function initIcons(){
   setIcon(document.getElementById('ic-story-share'),'share',11);
   setIcon(document.getElementById('ic-m-story'),'share',15);
   setIcon(document.getElementById('ic-story-reroll'),'rotate-ccw',11);
+  setIcon(document.getElementById('ic-todo-title'),'check-square',14);
+  setIcon(document.getElementById('ic-todo-add'),'plus',11);
+  setIcon(document.getElementById('ic-timer-add-btn'),'plus',11);
+  setIcon(document.getElementById('ic-m-todo'),'check-square',15);
 }
 
 // ============================================================
@@ -881,10 +936,11 @@ let state={
   shiftStart:LS.get('shiftStart',DEFAULTS.SHIFT_START),
   shiftEnd:LS.get('shiftEnd',DEFAULTS.SHIFT_END),
   timers:LS.get('timers',[]),
+  todos:LS.get('todos',[]),
   weeklySchedule:LS.get('weeklySchedule',DEFAULTS.WEEKLY_SCHEDULE),
   todayOverride:LS.get('todayOverride',null), // {date:'YYYY-MM-DD',status:'working'|'wfh'|'libur'|null}
   calYear:null,calMonth:null,calSelected:null,
-  formMode:'specific',editingId:null,
+  formMode:'specific',editingId:null,editingTodoId:null,
 };
 
 // ============================================================
@@ -1030,7 +1086,9 @@ function updateMetrics(){
   const dS=Math.max(0,Math.ceil((getTargetTs('syawal')-now)/86400000));
   document.getElementById('m-hari-ramadan').textContent=dR||'✓';
   document.getElementById('m-hari-syawal').textContent=dS||'✓';
-  document.getElementById('m-active').textContent=state.timers.filter(t=>t.daily||(t.timestamp>now)).length;
+  const activeTimers=state.timers.filter(t=>t.daily||(t.timestamp>now)).length;
+  const pendingTodos=state.todos.filter(td=>!td.done).length;
+  document.getElementById('m-active').textContent=activeTimers+pendingTodos;
   document.getElementById('m-target').textContent=state.pulangTime||'—';
 }
 
@@ -1306,6 +1364,120 @@ function deleteTimer(id){
   renderTimerList();updateNextEvent();updateMetrics();renderCalendar();
 }
 
+// ============================================================
+// TO-DO LIST CRUD
+// ============================================================
+function formatDeadline(ts){
+  if(!ts)return'';
+  const d=new Date(ts);
+  const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function renderTodoList(){
+  const listEl=document.getElementById('todo-list');
+  const countEl=document.getElementById('todo-count');
+  if(!listEl)return;
+  const doneCount=state.todos.filter(t=>t.done).length;
+  if(countEl)countEl.textContent=`${doneCount}/${state.todos.length}`;
+  if(!state.todos.length){
+    listEl.innerHTML=`<div class="list-empty">Belum ada tugas. Klik "+ Tambah Tugas" untuk mulai.</div>`;
+    return;
+  }
+  const sorted=[...state.todos].sort((a,b)=>{
+    if(a.done!==b.done)return a.done?1:-1;
+    if(a.deadline&&b.deadline)return a.deadline-b.deadline;
+    if(a.deadline)return-1;
+    if(b.deadline)return 1;
+    return 0;
+  });
+  const now=Date.now();
+  const checkSvg=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  const editSvg=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>`;
+  const trashSvg=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+
+  listEl.innerHTML=sorted.map(td=>{
+    const isOverdue=!td.done&&td.deadline&&td.deadline<now;
+    const dlText=td.deadline
+      ?`<div class="todo-meta ${isOverdue?'overdue':''}">Deadline: ${formatDeadline(td.deadline)}${isOverdue?' (Terlewat)':''}</div>`
+      :`<div class="todo-meta">Tanpa deadline</div>`;
+    return`<div class="todo-item ${td.done?'done':''}">
+      <button class="todo-check" onclick="toggleTodo('${td.id}')" title="Tandai selesai">${td.done?checkSvg:''}</button>
+      <div class="todo-info">
+        <div class="todo-name">${escHtml(td.name)}</div>
+        ${dlText}
+      </div>
+      <div class="ci-actions">
+        <button class="ci-btn edit" onclick="openEditTodo('${td.id}')" title="Edit">${editSvg}</button>
+        <button class="ci-btn del" onclick="deleteTodo('${td.id}')" title="Hapus">${trashSvg}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTodo(id){
+  const td=state.todos.find(x=>x.id===id);
+  if(!td)return;
+  td.done=!td.done;
+  LS.set('todos',state.todos);
+  renderTodoList();updateMetrics();
+}
+
+function openTodoModal(){
+  state.editingTodoId=null;
+  document.getElementById('modal-todo-title').innerHTML='';
+  document.getElementById('modal-todo-title').appendChild(mkIcon('check-square',15));
+  document.getElementById('modal-todo-title').appendChild(document.createTextNode(' Tambah Tugas'));
+  document.getElementById('td-name').value='';
+  document.getElementById('td-deadline').value='';
+  document.getElementById('td-save-btn').textContent='Tambah';
+  document.getElementById('modal-todo').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('td-name').focus(),50);
+}
+
+function openEditTodo(id){
+  const td=state.todos.find(x=>x.id===id);
+  if(!td)return;
+  state.editingTodoId=id;
+  document.getElementById('modal-todo-title').innerHTML='';
+  document.getElementById('modal-todo-title').appendChild(mkIcon('edit',15));
+  document.getElementById('modal-todo-title').appendChild(document.createTextNode(' Edit Tugas'));
+  document.getElementById('td-name').value=td.name;
+  if(td.deadline){
+    const d=new Date(td.deadline);const off=d.getTimezoneOffset();
+    const local=new Date(d.getTime()-off*60000);
+    document.getElementById('td-deadline').value=local.toISOString().slice(0,16);
+  }else{
+    document.getElementById('td-deadline').value='';
+  }
+  document.getElementById('td-save-btn').textContent='Simpan';
+  document.getElementById('modal-todo').classList.remove('hidden');
+}
+
+function saveTodo(){
+  const name=document.getElementById('td-name').value.trim();
+  if(!name){document.getElementById('td-name').focus();return;}
+  const dlRaw=document.getElementById('td-deadline').value;
+  const deadline=dlRaw?new Date(dlRaw).getTime():null;
+  if(state.editingTodoId){
+    const idx=state.todos.findIndex(x=>x.id===state.editingTodoId);
+    if(idx>=0){
+      state.todos[idx]={...state.todos[idx],name,deadline:isNaN(deadline)?null:deadline};
+    }
+  }else{
+    state.todos.push({id:genId(),name,deadline:isNaN(deadline)?null:deadline,done:false});
+  }
+  LS.set('todos',state.todos);
+  closeModal('modal-todo');
+  renderTodoList();updateMetrics();
+}
+
+function deleteTodo(id){
+  state.todos=state.todos.filter(x=>x.id!==id);
+  LS.set('todos',state.todos);
+  renderTodoList();updateMetrics();
+}
+
 function setModalTimerMode(mode){
   const isDaily=mode==='daily';
   document.getElementById('mt-mode-specific').classList.toggle('active',!isDaily);
@@ -1501,8 +1673,8 @@ function resetAll(){
   const now=new Date();
   state={heroMode:'ramadan',ramadanAdj:0,syawalAdj:0,
     pulangTime:DEFAULTS.PULANG_TIME,shiftStart:DEFAULTS.SHIFT_START,shiftEnd:DEFAULTS.SHIFT_END,
-    timers:[],weeklySchedule:{...DEFAULTS.WEEKLY_SCHEDULE},todayOverride:null,
-    calYear:now.getFullYear(),calMonth:now.getMonth(),calSelected:null,formMode:'specific',editingId:null};
+    timers:[],todos:[],weeklySchedule:{...DEFAULTS.WEEKLY_SCHEDULE},todayOverride:null,
+    calYear:now.getFullYear(),calMonth:now.getMonth(),calSelected:null,formMode:'specific',editingId:null,editingTodoId:null};
   document.getElementById('gauge-start').value=state.shiftStart;
   document.getElementById('gauge-end').value=state.shiftEnd;
   applyState();
@@ -1512,7 +1684,7 @@ function applyState(){
   document.getElementById('gauge-start').value=state.shiftStart;
   document.getElementById('gauge-end').value=state.shiftEnd;
   setHeroMode(state.heroMode);
-  renderTimerList();updateNextEvent();updateMetrics();renderCalendar();updateGauge();
+  renderTimerList();renderTodoList();updateNextEvent();updateMetrics();renderCalendar();updateGauge();
 }
 
 // ============================================================
