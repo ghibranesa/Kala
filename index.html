@@ -89,7 +89,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 /* ===== LOGICAL ROW GRID ===== */
 .flow-sections{display:flex;flex-direction:column;gap:18px;}
 .flow-group{display:flex;flex-direction:column;gap:10px;}
-.flow-row{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;align-items:stretch;}
+.flow-row{display:grid;grid-template-columns:1.25fr 0.95fr;gap:14px;align-items:start;}
 .flow-row-equal{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;}
 .flow-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
 
@@ -164,11 +164,11 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .cp-edit-btn{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.1);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
 .cp-edit-btn:hover{background:rgba(255,255,255,0.22);color:white;}
 .cp-title{font-size:14px;font-weight:600;color:var(--text-on-dark);display:flex;align-items:center;gap:6px;}
-.cp-digits{display:flex;align-items:baseline;gap:1px;}
+.cp-grid{display:flex;align-items:flex-start;justify-content:flex-start;gap:14px;margin-top:4px;}
+.cp-unit-box{display:flex;flex-direction:column;align-items:center;min-width:58px;}
 .cp-num{font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-on-dark);letter-spacing:-1.5px;line-height:1;}
-.cp-sep{font-size:26px;font-weight:600;color:var(--text-on-dark-muted);line-height:1;}
-.cp-unit-row{display:flex;gap:0;}
-.cp-unit{font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;text-transform:uppercase;flex:1;text-align:center;}
+.cp-sep{font-size:26px;font-weight:600;color:var(--text-on-dark-muted);line-height:1;padding-top:4px;}
+.cp-unit{font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;text-transform:uppercase;margin-top:6px;text-align:center;}
 .cp-status-done{font-size:13px;font-weight:700;color:var(--accent-teal);text-align:center;padding:10px 0;}
 
 .next-event-card{padding:14px 16px;border-radius:18px;display:flex;flex-direction:column;gap:7px;}
@@ -232,7 +232,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .cal-nav-btn:hover{background:rgba(255,255,255,0.16);color:white;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
 .cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--text-on-dark-muted);letter-spacing:0.5px;padding:2px 0;}
-.cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;border-radius:9px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-on-dark-muted);cursor:pointer;transition:all 0.12s;min-height:26px;}
+.cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:34px;border-radius:9px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-on-dark-muted);cursor:pointer;transition:all 0.12s;}
 .cal-day:hover:not(.other-month){background:rgba(255,255,255,0.1);color:white;}
 .cal-day.today{background:rgba(255,255,255,0.18);color:white;font-weight:700;border:1px solid rgba(255,255,255,0.28);}
 .cal-day.other-month{opacity:0.25;pointer-events:none;}
@@ -460,7 +460,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
             </div>
           </div>
 
-          <div class="glass-light metrics-strip" style="flex:1;">
+          <div class="glass-light metrics-strip">
             <div class="metric-tile">
               <div class="m-val" id="m-hari-ramadan">—</div>
               <div class="m-label"><span class="ic" id="ic-m-ramadan" style="color:var(--text-muted)"></span>Hari ke Ramadhan</div>
@@ -1001,11 +1001,13 @@ function getTodayWorkStatus(){
   return state.weeklySchedule[dow]||'off';
 }
 
-function getStatusInfo(status,isWorkHours){
+function getStatusInfo(status,isWorkHours,hasShift=true){
   if(status==='libur') return{cls:'libur',text:'Day Off',icon:'umbrella-off'};
   if(status==='wfh')   return{cls:'wfh',text:'WFH',icon:'laptop'};
-  if(status==='working'&&isWorkHours) return{cls:'working',text:'WFO',icon:'briefcase'};
-  if(status==='working'&&!isWorkHours) return{cls:'offduty',text:'Off Duty',icon:'clock'};
+  if(status==='working'){
+    if(!hasShift||isWorkHours) return{cls:'working',text:'WFO',icon:'briefcase'};
+    return{cls:'offduty',text:'Off Duty',icon:'clock'};
+  }
   return{cls:'offduty',text:'Off Duty',icon:'clock'};
 }
 
@@ -1028,7 +1030,7 @@ function updateHeader(){
     isWorkHours=cur>=sp[0]*60+sp[1]&&cur<ep[0]*60+ep[1];
   }
   const ws=getTodayWorkStatus();
-  const info=getStatusInfo(ws,isWorkHours);
+  const info=getStatusInfo(ws,isWorkHours,hasShift);
   const badge=document.getElementById('status-badge');
   badge.className='status-badge '+info.cls;
   document.getElementById('status-text').textContent=info.text;
@@ -1196,13 +1198,12 @@ function updatePulang(){
     wrap.innerHTML=`<div class="cp-status-done">Sudah Waktunya Pulang! 🎉</div>`;
   }else{
     wrap.innerHTML=`
-      <div class="cp-digits">
-        <span class="cp-num">${pad(ph)}</span><span class="cp-sep">:</span>
-        <span class="cp-num">${pad(pm)}</span><span class="cp-sep">:</span>
-        <span class="cp-num">${pad(ps)}</span>
-      </div>
-      <div class="cp-unit-row">
-        <span class="cp-unit">Jam</span><span class="cp-unit">Menit</span><span class="cp-unit">Detik</span>
+      <div class="cp-grid">
+        <div class="cp-unit-box"><span class="cp-num">${pad(ph)}</span><span class="cp-unit">Jam</span></div>
+        <span class="cp-sep">:</span>
+        <div class="cp-unit-box"><span class="cp-num">${pad(pm)}</span><span class="cp-unit">Menit</span></div>
+        <span class="cp-sep">:</span>
+        <div class="cp-unit-box"><span class="cp-num">${pad(ps)}</span><span class="cp-unit">Detik</span></div>
       </div>`;
   }
 }
