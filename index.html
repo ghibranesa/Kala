@@ -1232,8 +1232,8 @@ function updateProgressBars(){
 // ============================================================
 function updateMetrics(){
   const now=Date.now();
-  const dR=Math.max(0,Math.ceil((getTargetTs('ramadan')-now)/86400000));
-  const dS=Math.max(0,Math.ceil((getTargetTs('syawal')-now)/86400000));
+  const dR=msToHMS(getTargetTs('ramadan')-now).d;
+  const dS=msToHMS(getTargetTs('syawal')-now).d;
   document.getElementById('m-hari-ramadan').textContent=dR||'✓';
   document.getElementById('m-hari-syawal').textContent=dS||'✓';
   const activeTimers=state.timers.filter(t=>t.daily||(t.timestamp>now)).length;
@@ -2048,8 +2048,8 @@ async function renderStoryCanvas(){
 
   // 5. Sleek Frosted Countdown Capsules (Ramadhan & Syawal)
   const nowMs=Date.now();
-  const dRamadan=Math.max(0,Math.ceil((getTargetTs('ramadan')-nowMs)/86400000));
-  const dSyawal=Math.max(0,Math.ceil((getTargetTs('syawal')-nowMs)/86400000));
+  const dRamadan=Math.max(0,Math.floor((getTargetTs('ramadan')-nowMs)/86400000));
+  const dSyawal=Math.max(0,Math.floor((getTargetTs('syawal')-nowMs)/86400000));
 
   const capX=110,capY=1310,capW=W-220,capH=225,gap=26;
   const halfW=(capW-gap)/2;
