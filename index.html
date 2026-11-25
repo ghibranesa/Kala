@@ -1,5 +1,12 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Kala - Daily Routine &amp; Countdown</title>
+<meta name="theme-color" content="#162436">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kala.">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./icon-512.png">
+<link rel="apple-touch-icon" href="./icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap">
 
@@ -91,6 +98,17 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .header-ayat .ayat-text{color:rgba(237,242,247,0.84);}
 .header-ayat .ayat-refresh-btn{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);color:var(--text-on-dark);}
 .header-ayat .ayat-refresh-btn:hover{background:rgba(255,255,255,0.18);color:#ffffff;}
+.header-sholat{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.12);}
+.sholat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.sholat-title{font-size:11px;font-weight:700;color:var(--accent-light);display:flex;align-items:center;gap:5px;}
+.sholat-next{font-size:11px;font-weight:700;color:#ffffff;background:rgba(127,179,207,0.18);border:1px solid rgba(127,179,207,0.3);padding:3px 10px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums;}
+.sholat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.sholat-item{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px 6px;text-align:center;transition:all 0.2s;}
+.sholat-item.active{background:rgba(127,179,207,0.22);border-color:rgba(127,179,207,0.45);box-shadow:0 2px 10px rgba(0,0,0,0.15);}
+.sholat-name{font-size:10px;font-weight:700;color:var(--text-on-dark-muted);text-transform:uppercase;letter-spacing:0.4px;}
+.sholat-item.active .sholat-name{color:var(--accent-light);}
+.sholat-time{font-size:14px;font-weight:700;color:#ffffff;font-variant-numeric:tabular-nums;margin-top:2px;}
+@media(max-width:480px){.sholat-grid{gap:5px;}.sholat-time{font-size:12.5px;}}
 
 /* Status badge — clickable */
 .status-badge{padding:6px 12px;border-radius:var(--r-pill);font-size:11px;font-weight:700;letter-spacing:0.3px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;user-select:none;}
@@ -372,6 +390,18 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 .btn-reset:hover{color:var(--accent-rose);background:rgba(194,107,130,0.1);}
 .btn-io{font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-secondary);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-pill);transition:all 0.15s;}
 .btn-io:hover{color:var(--accent);background:rgba(79,130,160,0.12);}
+.pwa-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:90;display:flex;align-items:center;justify-content:space-between;gap:12px;width:calc(100% - 32px);max-width:440px;padding:12px 16px;border-radius:18px;background:rgba(22,36,54,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);box-shadow:0 10px 30px rgba(0,0,0,0.32);color:var(--text-on-dark);transition:all 0.25s var(--ease);}
+.pwa-banner.hidden{display:none!important;}
+.pwa-info{display:flex;align-items:center;gap:10px;min-width:0;}
+.pwa-icon{width:34px;height:34px;border-radius:9px;flex-shrink:0;object-fit:cover;}
+.pwa-text{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.pwa-title{font-size:12.5px;font-weight:700;color:#ffffff;}
+.pwa-sub{font-size:10.5px;color:var(--text-on-dark-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pwa-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.pwa-btn-install{padding:6px 13px;border-radius:var(--r-pill);border:none;background:var(--accent-light);color:#0f1824;font-family:var(--font);font-size:11.5px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.pwa-btn-install:hover{filter:brightness(1.08);}
+.pwa-btn-close{width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:var(--text-on-dark-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.pwa-btn-close:hover{background:rgba(255,255,255,0.2);color:#ffffff;}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:860px){
@@ -428,6 +458,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <button class="ayat-refresh-btn" id="btn-ayat-refresh" onclick="fetchRandomAyat()">
           <span class="ic" id="ic-ayat-refresh"></span> Acak Ayat
         </button>
+      </div>
+    </div>
+
+    <div class="header-sholat">
+      <div class="sholat-top">
+        <span class="sholat-title"><span class="ic" id="ic-sholat"></span> Jadwal Sholat <span id="sholat-loc-tag" style="font-weight:400;opacity:0.75;"></span></span>
+        <span class="sholat-next" id="sholat-next-badge">Memuat jadwal…</span>
+      </div>
+      <div class="sholat-grid" id="sholat-grid">
+        <div class="sholat-item" data-prayer="Fajr"><div class="sholat-name">Subuh</div><div class="sholat-time" id="st-Fajr">--:--</div></div>
+        <div class="sholat-item" data-prayer="Dhuhr"><div class="sholat-name">Dzuhur</div><div class="sholat-time" id="st-Dhuhr">--:--</div></div>
+        <div class="sholat-item" data-prayer="Asr"><div class="sholat-name">Ashar</div><div class="sholat-time" id="st-Asr">--:--</div></div>
+        <div class="sholat-item" data-prayer="Maghrib"><div class="sholat-name">Maghrib</div><div class="sholat-time" id="st-Maghrib">--:--</div></div>
+        <div class="sholat-item" data-prayer="Isha"><div class="sholat-name">Isya</div><div class="sholat-time" id="st-Isha">--:--</div></div>
       </div>
     </div>
   </header>
@@ -849,6 +893,21 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
 </div>
 
+<!-- PWA INSTALL POPUP -->
+<div class="pwa-banner hidden" id="pwa-banner">
+  <div class="pwa-info">
+    <img src="./icon-512.png" alt="Kala." class="pwa-icon">
+    <div class="pwa-text">
+      <div class="pwa-title">Install Kala.</div>
+      <div class="pwa-sub">Akses lebih cepat langsung dari layar utama</div>
+    </div>
+  </div>
+  <div class="pwa-actions">
+    <button class="pwa-btn-install" onclick="installPWA()">Install</button>
+    <button class="pwa-btn-close" onclick="dismissPWA()" title="Tutup">✕</button>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // ICONS
@@ -889,6 +948,7 @@ function mkIcon(name,size=14){
     trash:['M3 6h18','M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6','M10 11v6','M14 11v6','M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'],
     'rotate-ccw':['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8','M3 3v5h5'],
     'map-pin':['M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z','M12 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'],
+    compass:['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z','M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z'],
     download:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','M7 10l5 5 5-5','M12 15V3'],
     upload:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','M17 8l-5-5-5 5','M12 3v12'],
     settings:['M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z','M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'],
@@ -927,6 +987,7 @@ function initIcons(){
   setIcon(document.getElementById('ic-cal-prev'),'chevron-left',12);
   setIcon(document.getElementById('ic-cal-next'),'chevron-right',12);
   setIcon(document.getElementById('ic-loc'),'map-pin',11);
+  setIcon(document.getElementById('ic-sholat'),'compass',12);
   setIcon(document.getElementById('ic-export'),'download',11);
   setIcon(document.getElementById('ic-import'),'upload',11);
   setIcon(document.getElementById('ic-reset'),'rotate-ccw',11);
@@ -1779,6 +1840,7 @@ function tick(){
   lastSec=nowSec;
   updateHeader();updateHeroCountdown();updatePulang();
   updateTimerCountdowns();updateNextEvent();updateGauge();updateMetrics();
+  updateSholatCountdown();
 }
 
 // ============================================================
@@ -2064,16 +2126,110 @@ function downloadStoryImage(){
 }
 
 // ============================================================
-// DEVICE LOCATION & DATA EXPORT/IMPORT
+// PRAYER TIMES (KEMENAG RI) & DEVICE LOCATION
 // ============================================================
+let prayerTimings=null;
+const PRAYER_LIST=[
+  {key:'Fajr',name:'Subuh'},
+  {key:'Dhuhr',name:'Dzuhur'},
+  {key:'Asr',name:'Ashar'},
+  {key:'Maghrib',name:'Maghrib'},
+  {key:'Isha',name:'Isya'}
+];
+
+async function fetchPrayerTimes(lat=-6.2088,lon=106.8456,locLabel='Jakarta'){
+  const tk=todayKey();
+  const cacheKey=`sholat_${tk}_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+  const cached=LS.get(cacheKey,null);
+  const tagEl=document.getElementById('sholat-loc-tag');
+  if(tagEl)tagEl.textContent=`· ${locLabel}`;
+
+  if(cached){
+    prayerTimings=cached;
+    renderPrayerTimes();
+    return;
+  }
+
+  try{
+    const now=new Date();
+    const dStr=`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()}`;
+    // method=20 adalah standar Kementerian Agama Republik Indonesia (Kemenag)
+    const res=await fetch(`https://api.aladhan.com/v1/timings/${dStr}?latitude=${lat}&longitude=${lon}&method=20`);
+    const json=await res.json();
+    if(json.code===200&&json.data&&json.data.timings){
+      const t=json.data.timings;
+      prayerTimings={
+        Fajr:t.Fajr.slice(0,5),
+        Dhuhr:t.Dhuhr.slice(0,5),
+        Asr:t.Asr.slice(0,5),
+        Maghrib:t.Maghrib.slice(0,5),
+        Isha:t.Isha.slice(0,5)
+      };
+      LS.set(cacheKey,prayerTimings);
+      renderPrayerTimes();
+    }
+  }catch{
+    const badge=document.getElementById('sholat-next-badge');
+    if(badge)badge.textContent='Gagal memuat jadwal';
+  }
+}
+
+function renderPrayerTimes(){
+  if(!prayerTimings)return;
+  PRAYER_LIST.forEach(p=>{
+    const el=document.getElementById(`st-${p.key}`);
+    if(el)el.textContent=prayerTimings[p.key]||'--:--';
+  });
+  updateSholatCountdown();
+}
+
+function updateSholatCountdown(){
+  if(!prayerTimings)return;
+  const now=new Date();
+  const curSecs=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  let nextPrayer=null;
+  let diffSecs=0;
+
+  for(const p of PRAYER_LIST){
+    const timeStr=prayerTimings[p.key];
+    if(!timeStr)continue;
+    const[hh,mm]=timeStr.split(':').map(Number);
+    const pSecs=hh*3600+mm*60;
+    if(pSecs>curSecs){
+      nextPrayer=p;
+      diffSecs=pSecs-curSecs;
+      break;
+    }
+  }
+
+  // Jika sudah lewat Isya, target berikutnya adalah Subuh besok
+  if(!nextPrayer){
+    nextPrayer=PRAYER_LIST[0];
+    const[hh,mm]=prayerTimings.Fajr.split(':').map(Number);
+    diffSecs=(86400-curSecs)+(hh*3600+mm*60);
+  }
+
+  document.querySelectorAll('.sholat-item').forEach(el=>{
+    el.classList.toggle('active',el.dataset.prayer===nextPrayer.key);
+  });
+
+  const badge=document.getElementById('sholat-next-badge');
+  if(badge){
+    const h=Math.floor(diffSecs/3600);
+    const m=Math.floor((diffSecs%3600)/60);
+    const s=diffSecs%60;
+    badge.textContent=`Menuju ${nextPrayer.name} · −${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+}
+
 function detectLocation(forceRefresh=false){
   const locEl=document.getElementById('loc-text');
   if(!locEl)return;
 
-  // Gunakan cache 30 menit agar tidak spam API
   const cached=LS.get('cachedLocation',null);
-  if(!forceRefresh&&cached&&(Date.now()-cached.ts<1800000)){
+  if(!forceRefresh&&cached&&cached.lat&&cached.lon&&(Date.now()-cached.ts<1800000)){
     locEl.textContent=cached.label;
+    fetchPrayerTimes(cached.lat,cached.lon,cached.label);
     return;
   }
 
@@ -2081,6 +2237,7 @@ function detectLocation(forceRefresh=false){
     const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Jakarta';
     const city=tz.split('/').pop().replace(/_/g,' ');
     locEl.textContent=`${city} (Zona Perangkat)`;
+    fetchPrayerTimes(-6.2088,106.8456,city);
   };
 
   if(!('geolocation' in navigator)){
@@ -2091,17 +2248,19 @@ function detectLocation(forceRefresh=false){
   locEl.textContent='Mendeteksi lokasi…';
   navigator.geolocation.getCurrentPosition(
     async(pos)=>{
+      const{latitude,longitude}=pos.coords;
       try{
-        const{latitude,longitude}=pos.coords;
         const res=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`);
         const data=await res.json();
         const area=data.locality||data.city||data.principalSubdivision||'';
         const region=data.principalSubdivision&&data.principalSubdivision!==area?data.principalSubdivision:(data.countryName||'');
         const label=[area,region].filter(Boolean).join(', ')||'Lokasi Ditemukan';
         locEl.textContent=label;
-        LS.set('cachedLocation',{label,ts:Date.now()});
+        LS.set('cachedLocation',{label,lat:latitude,lon:longitude,ts:Date.now()});
+        fetchPrayerTimes(latitude,longitude,area||label);
       }catch{
-        fallbackTz();
+        locEl.textContent='Koordinat Perangkat';
+        fetchPrayerTimes(latitude,longitude,'Lokasi Saat Ini');
       }
     },
     ()=>{
@@ -2183,6 +2342,42 @@ function importData(event){
 }
 
 // ============================================================
+// PWA INSTALL PROMPT
+// ============================================================
+let deferredInstallPrompt=null;
+
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  if(!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
+    const banner=document.getElementById('pwa-banner');
+    if(banner)banner.classList.remove('hidden');
+  }
+});
+
+async function installPWA(){
+  if(!deferredInstallPrompt)return;
+  deferredInstallPrompt.prompt();
+  const{outcome}=await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  const banner=document.getElementById('pwa-banner');
+  if(banner)banner.classList.add('hidden');
+}
+
+function dismissPWA(){
+  sessionStorage.setItem('pwaDismissed','1');
+  const banner=document.getElementById('pwa-banner');
+  if(banner)banner.classList.add('hidden');
+}
+
+window.addEventListener('appinstalled',()=>{
+  deferredInstallPrompt=null;
+  const banner=document.getElementById('pwa-banner');
+  if(banner)banner.classList.add('hidden');
+});
+
+// ============================================================
 // INIT
 // ============================================================
 (function init(){
@@ -2190,6 +2385,10 @@ function importData(event){
   state.calYear=now.getFullYear();state.calMonth=now.getMonth();
   initIcons();initGauge();applyState();tick();fetchRandomAyat();detectLocation();
   setInterval(tick,250);
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
 })();
 </script>
 
