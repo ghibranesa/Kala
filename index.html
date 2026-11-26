@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#162436">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Kala.">
+<meta name="apple-mobile-web-app-title" content="Kala">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" href="./icon-512.png">
 <link rel="apple-touch-icon" href="./icon-512.png">
@@ -73,7 +73,9 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
 
 .ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ic svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#ic-app{height:28px;align-items:center;margin-right:4px;}
 #ic-app svg{fill:currentColor;stroke:none;}
+#ic-app img{height:100%;width:auto;aspect-ratio:1/1;object-fit:contain;display:block;}
 
 /* ===== SECTION LABEL ===== */
 .section-label{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);padding:0 2px;}
@@ -431,7 +433,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <div class="header-brand">
         <div class="app-name">
           <span class="ic" id="ic-app"></span>
-          <span>Kala<span style="color:var(--accent-light)">.</span></span>
+          <span>Kala</span>
         </div>
         <div class="greeting-line" id="hdr-greeting">Hai, selamat datang!</div>
         <div class="date-line" id="hdr-date">Memuat…</div>
@@ -903,9 +905,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <!-- PWA INSTALL POPUP -->
 <div class="pwa-banner hidden" id="pwa-banner">
   <div class="pwa-info">
-    <img src="./icon-512.png" alt="Kala." class="pwa-icon">
+    <img src="./icon-512.png" alt="Kala" class="pwa-icon">
     <div class="pwa-text">
-      <div class="pwa-title">Install Kala.</div>
+      <div class="pwa-title">Install Kala</div>
       <div class="pwa-sub">Akses lebih cepat langsung dari layar utama</div>
     </div>
   </div>
@@ -975,7 +977,10 @@ function mkIcon(name,size=14){
 function setIcon(el,name,size=14){if(!el)return;el.innerHTML='';el.appendChild(mkIcon(name,size));}
 
 function initIcons(){
-  setIcon(document.getElementById('ic-app'),'kala',28);
+  const appIc=document.getElementById('ic-app');
+  if(appIc){
+    appIc.innerHTML='<img src="./cat-header.png" alt="Kala">';
+  }
   setIcon(document.getElementById('ic-status'),'briefcase',12);
   setIcon(document.getElementById('ic-add-hero'),'plus',14);
   setIcon(document.getElementById('ic-moon'),'moon',12);
@@ -2099,7 +2104,7 @@ async function renderStoryCanvas(){
   // 6. Clean Minimalist Web Footer
   ctx.fillStyle='rgba(255,255,255,0.92)';
   ctx.font='700 32px "DM Sans", sans-serif';
-  ctx.fillText('Kala.',W/2,1675);
+  ctx.fillText('Kala',W/2,1675);
 
   ctx.fillStyle='rgba(237,242,247,0.52)';
   ctx.font='400 22px "DM Sans", sans-serif';
@@ -2148,7 +2153,7 @@ function downloadStoryImage(){
       try{
         await navigator.share({
           files:[file],
-          title:'Kala. Story'
+          title:'Kala Story'
         });
         return;
       }catch(err){

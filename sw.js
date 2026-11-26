@@ -1,9 +1,10 @@
-const CACHE_NAME = 'kala-v3';
+const CACHE_NAME = 'kala-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-512.png'
+  './icon-512.png',
+  './cat-header.png'
 ];
 
 // Install: simpan aset inti & langsung aktifkan SW baru tanpa nunggu

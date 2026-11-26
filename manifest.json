@@ -1,6 +1,6 @@
 {
-  "name": "Kala. — Daily Routine & Countdown",
-  "short_name": "Kala.",
+  "name": "Kala — Daily Routine & Countdown",
+  "short_name": "Kala",
   "description": "Ruang waktu harian, jadwal sholat, progres shift & pengingat ibadah",
   "start_url": "./index.html",
   "display": "standalone",
