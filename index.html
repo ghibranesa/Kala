@@ -2348,19 +2348,36 @@ function importData(event){
 }
 
 // ============================================================
-// PWA INSTALL PROMPT
+// PWA INSTALL PROMPT (Android/Desktop + iOS Safari)
 // ============================================================
 let deferredInstallPrompt=null;
+const isIos=/iphone|ipad|ipod/i.test(window.navigator.userAgent);
+const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
 
+// 1. Android & Desktop (Chrome/Edge)
 window.addEventListener('beforeinstallprompt',(e)=>{
   e.preventDefault();
   deferredInstallPrompt=e;
-  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
   if(!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
     const banner=document.getElementById('pwa-banner');
     if(banner)banner.classList.remove('hidden');
   }
 });
+
+// 2. iPhone & iPad (iOS Safari)
+if(isIos&&!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
+  const banner=document.getElementById('pwa-banner');
+  if(banner){
+    const sub=banner.querySelector('.pwa-sub');
+    const installBtn=banner.querySelector('.pwa-btn-install');
+    if(sub){
+      sub.style.whiteSpace='normal';
+      sub.innerHTML='Tap ikon <b>Share (⍐)</b> lalu pilih <b>Add to Home Screen</b>';
+    }
+    if(installBtn)installBtn.style.display='none';
+    banner.classList.remove('hidden');
+  }
+}
 
 async function installPWA(){
   if(!deferredInstallPrompt)return;
