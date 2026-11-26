@@ -415,6 +415,7 @@ body::after{width:450px;height:450px;background:radial-gradient(circle,#4f82a0 0
   .digit-num{font-size:40px;} .digit-sep{font-size:28px;padding-bottom:14px;}
   .metrics-strip{grid-template-columns:1fr 1fr;}
 }
+input[type="date"],input[type="time"],input[type="datetime-local"]{-webkit-appearance:none;appearance:none;min-height:38px;}
 @media(prefers-reduced-motion:no-preference){.digit-num{transition:transform 0.1s var(--ease);}}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 </style>
@@ -894,7 +895,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     </div>
     <div class="modal-actions" style="width:100%;">
       <button class="modal-btn" onclick="closeModal('modal-story')">Tutup</button>
-      <button class="modal-btn primary" onclick="downloadStoryImage()">Download PNG</button>
+      <button class="modal-btn primary" onclick="downloadStoryImage()">Simpan / Bagikan</button>
     </div>
   </div>
 </div>
@@ -2112,23 +2113,77 @@ async function renderStoryCanvas(){
   ctx.fillText(webUrl,W/2,1758);
 }
 
+function resetStoryPreview(){
+  const canvas=document.getElementById('story-canvas');
+  if(canvas&&canvas.parentElement){
+    const oldImg=canvas.parentElement.querySelector('img.story-fallback-img');
+    if(oldImg)oldImg.remove();
+    canvas.style.display='block';
+  }
+}
+
 async function openStoryModal(){
+  resetStoryPreview();
   document.getElementById('modal-story').classList.remove('hidden');
   await renderStoryCanvas();
 }
 
 async function refreshStoryAyat(){
+  resetStoryPreview();
   await fetchRandomAyat();
   await renderStoryCanvas();
 }
 
 function downloadStoryImage(){
   const canvas=document.getElementById('story-canvas');
-  const link=document.createElement('a');
   const tk=todayKey();
-  link.download=`Kala-Story-${tk}.png`;
-  link.href=canvas.toDataURL('image/png');
-  link.click();
+  const fileName=`Kala-Story-${tk}.png`;
+
+  canvas.toBlob(async(blob)=>{
+    if(!blob)return;
+    const file=new File([blob],fileName,{type:'image/png'});
+
+    // 1. Android & iOS modern: buka Share Sheet bawaan OS (Save Image / IG Story)
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({
+          files:[file],
+          title:'Kala. Story'
+        });
+        return;
+      }catch(err){
+        if(err.name==='AbortError')return;
+      }
+    }
+
+    const url=URL.createObjectURL(blob);
+    const isApple=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+
+    // 2. Fallback iOS/iPadOS (jika Share Sheet diblokir): ubah preview jadi <img> agar bisa tekan-tahan -> Save to Photos
+    if(isApple){
+      const wrap=canvas.parentElement;
+      if(wrap){
+        let img=wrap.querySelector('img.story-fallback-img');
+        if(!img){
+          img=document.createElement('img');
+          img.className='story-fallback-img';
+          img.style.cssText='width:100%;height:100%;display:block;object-fit:cover;';
+          canvas.style.display='none';
+          wrap.appendChild(img);
+        }
+        img.src=url;
+        alert('Tekan dan tahan gambar preview di atas, lalu pilih "Simpan ke Foto" (Save to Photos).');
+        return;
+      }
+    }
+
+    // 3. Desktop & Android tanpa Web Share: download file PNG standar
+    const link=document.createElement('a');
+    link.download=fileName;
+    link.href=url;
+    link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  },'image/png');
 }
 
 // ============================================================
@@ -2191,8 +2246,7 @@ function renderPrayerTimes(){
 
 function updateSholatCountdown(){
   if(!prayerTimings)return;
-  const now=new Date();
-  const curSecs=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const{totalSecs:curSecs}=getWIBParts(new Date());
   let nextPrayer=null;
   let diffSecs=0;
 
@@ -2351,7 +2405,7 @@ function importData(event){
 // PWA INSTALL PROMPT (Android/Desktop + iOS Safari)
 // ============================================================
 let deferredInstallPrompt=null;
-const isIos=/iphone|ipad|ipod/i.test(window.navigator.userAgent);
+const isIos=/iphone|ipad|ipod/i.test(window.navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
 
 // 1. Android & Desktop (Chrome/Edge)
