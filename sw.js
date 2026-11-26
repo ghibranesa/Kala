@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kala-v5';
+const CACHE_NAME = 'kala-v1';
 const ASSETS = [
   './',
   './index.html',

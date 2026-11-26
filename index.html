@@ -2099,12 +2099,32 @@ async function renderStoryCanvas(){
   ctx.font='400 22px "DM Sans", sans-serif';
   ctx.fillText('Ruang waktu harian, jadwal & pengingat ibadah',W/2,1702);
 
-  const webUrl=(window.location.hostname&&window.location.hostname!=='localhost')
-    ?window.location.hostname
-    :'ghibranesa.github.io/kala';
-  ctx.fillStyle='#7fb3cf';
+  const igHandle='ghibraines';
+  const igIconSize=22;
+  const igGap=8;
+  const igCenterY=1744;
+
   ctx.font='600 21px "DM Sans", sans-serif';
-  ctx.fillText(webUrl,W/2,1742);
+  const igTextW=ctx.measureText(igHandle).width;
+  const totalIgW=igIconSize+igGap+igTextW;
+  const igStartX=(W-totalIgW)/2;
+
+  ctx.save();
+  ctx.translate(igStartX,igCenterY-igIconSize/2);
+  ctx.scale(igIconSize/24,igIconSize/24);
+  ctx.strokeStyle='#7fb3cf';
+  ctx.lineWidth=2.2;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.stroke(new Path2D('M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2z'));
+  ctx.stroke(new Path2D('M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z'));
+  ctx.stroke(new Path2D('M17.5 6.5h.01'));
+  ctx.restore();
+
+  ctx.textAlign='left';
+  ctx.textBaseline='middle';
+  ctx.fillStyle='#7fb3cf';
+  ctx.fillText(igHandle,igStartX+igIconSize+igGap,igCenterY+1);
 }
 
 function resetStoryPreview(){
