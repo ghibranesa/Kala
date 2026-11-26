@@ -1937,185 +1937,174 @@ function drawRoundedRect(ctx,x,y,w,h,r){
   ctx.closePath();
 }
 
+function loadStoryCatIcon(){
+  return new Promise((resolve)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=()=>resolve(null);
+    img.src='./cat-header.png';
+  });
+}
+
 async function renderStoryCanvas(){
   if(document.fonts&&document.fonts.ready){
     await document.fonts.ready;
   }
+  const catImg=await loadStoryCatIcon();
   const canvas=document.getElementById('story-canvas');
   const ctx=canvas.getContext('2d');
   const W=1080,H=1920;
 
-  // 1. Clean Deep Slate & Midnight Gradient
+  // 1. Dark Midnight Ultra-Clean Background
   const bg=ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#0f1824');
+  bg.addColorStop(0,'#0c1420');
   bg.addColorStop(0.55,'#162436');
-  bg.addColorStop(1,'#0b121c');
+  bg.addColorStop(1,'#090f18');
   ctx.fillStyle=bg;
   ctx.fillRect(0,0,W,H);
 
-  // Soft Ambient Aurora Glows
-  const topGlow=ctx.createRadialGradient(W/2,220,10,W/2,220,620);
-  topGlow.addColorStop(0,'rgba(127,179,207,0.16)');
+  const topGlow=ctx.createRadialGradient(W/2,210,10,W/2,210,640);
+  topGlow.addColorStop(0,'rgba(127,179,207,0.15)');
   topGlow.addColorStop(1,'rgba(127,179,207,0)');
   ctx.fillStyle=topGlow;
   ctx.fillRect(0,0,W,H);
 
-  const botGlow=ctx.createRadialGradient(W/2,1620,10,W/2,1620,580);
-  botGlow.addColorStop(0,'rgba(62,164,148,0.12)');
+  const botGlow=ctx.createRadialGradient(W/2,1650,10,W/2,1650,600);
+  botGlow.addColorStop(0,'rgba(62,164,148,0.11)');
   botGlow.addColorStop(1,'rgba(62,164,148,0)');
   ctx.fillStyle=botGlow;
   ctx.fillRect(0,0,W,H);
 
-  // 2. Subtle Islamic Geometric Arch & Single Thin Frame
-  ctx.strokeStyle='rgba(255,255,255,0.09)';
-  ctx.lineWidth=1.5;
-  drawRoundedRect(ctx,64,64,W-128,H-128,52);
-  ctx.stroke();
-
-  // Subtle Rub el Hizb (8-pointed Islamic Star) Outline Behind Bismillah
-  ctx.save();
-  ctx.translate(W/2,210);
-  ctx.strokeStyle='rgba(255,255,255,0.05)';
-  ctx.lineWidth=2;
-  ctx.strokeRect(-58,-58,116,116);
-  ctx.rotate(Math.PI/4);
-  ctx.strokeRect(-58,-58,116,116);
-  ctx.restore();
-
-  // Bismillah Calligraphy Header Accent
+  // 2. Top Header: Bismillah + Masehi & Hijriah
   ctx.textAlign='center';
-  ctx.font='400 44px "Amiri", serif';
-  ctx.fillStyle='rgba(237,242,247,0.55)';
-  ctx.fillText('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',W/2,222);
+  ctx.font='400 42px "Amiri", serif';
+  ctx.fillStyle='rgba(237,242,247,0.58)';
+  ctx.fillText('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',W/2,335);
 
-  // 3. Date Header (Masehi & Hijriah)
   const now=new Date();
   const dateStr=new Intl.DateTimeFormat('id-ID',{
     timeZone:'Asia/Jakarta',weekday:'long',day:'numeric',month:'long',year:'numeric'
   }).format(now);
   const hijriStr=toHijri(now);
 
-  ctx.fillStyle='rgba(237,242,247,0.6)';
-  ctx.font='500 26px "DM Sans", sans-serif';
-  ctx.fillText(dateStr,W/2,310);
+  ctx.fillStyle='rgba(237,242,247,0.62)';
+  ctx.font='500 25px "DM Sans", sans-serif';
+  ctx.fillText(dateStr,W/2,418);
 
   ctx.fillStyle='#7fb3cf';
-  ctx.font='700 28px "DM Sans", sans-serif';
-  ctx.fillText(hijriStr,W/2,354);
+  ctx.font='700 27px "DM Sans", sans-serif';
+  ctx.fillText(hijriStr,W/2,460);
 
-  // Minimalist Horizontal Line
-  ctx.strokeStyle='rgba(255,255,255,0.1)';
-  ctx.lineWidth=1.5;
-  ctx.beginPath();
-  ctx.moveTo(420,404);
-  ctx.lineTo(660,404);
-  ctx.stroke();
-
-  // 4. Frameless Editorial Ayat Section (Airy & Clean)
+  // 3. Editorial Ayat Block (Clean & Uncluttered)
   const maxTextW=W-220;
-
-  // Arabic Text
   const arLen=currentAyat.arabic.length;
-  const arFontSize=arLen>200?42:arLen>120?48:58;
+  const arFontSize=arLen>200?38:arLen>120?42:52;
   ctx.font=`700 ${arFontSize}px "Amiri", serif`;
   ctx.fillStyle='#f8fbfd';
-  const arLines=wrapCanvasText(ctx,currentAyat.arabic,maxTextW).slice(0,5);
-  let curY=515;
-  const arLineH=arFontSize*1.85;
+  const arLines=wrapCanvasText(ctx,currentAyat.arabic,maxTextW).slice(0,4);
+  let curY=585;
+  const arLineH=arFontSize*1.74;
   for(const line of arLines){
     ctx.fillText(line,W/2,curY);
     curY+=arLineH;
   }
 
-  // Subtle Crescent/Dot Separator
-  curY+=14;
-  ctx.fillStyle='rgba(245,158,90,0.7)';
-  ctx.font='600 24px "DM Sans", sans-serif';
-  ctx.fillText('✦',W/2,curY);
-
-  // Indonesian Translation
-  curY+=56;
+  curY+=20;
   const idLen=currentAyat.text.length;
-  const idFontSize=idLen>230?28:idLen>140?31:35;
+  const idFontSize=idLen>230?25:idLen>140?28:32;
   ctx.font=`400 ${idFontSize}px "DM Sans", sans-serif`;
-  ctx.fillStyle='rgba(221,234,244,0.9)';
-  const idLines=wrapCanvasText(ctx,`“${currentAyat.text}”`,maxTextW).slice(0,6);
-  const idLineH=idFontSize*1.58;
+  ctx.fillStyle='rgba(221,234,244,0.88)';
+  const idLines=wrapCanvasText(ctx,`“${currentAyat.text}”`,maxTextW).slice(0,5);
+  const idLineH=idFontSize*1.5;
   for(const line of idLines){
     ctx.fillText(line,W/2,curY);
     curY+=idLineH;
   }
 
-  // Surah Reference Tag
-  curY+=34;
+  curY+=24;
   ctx.fillStyle='#7fb3cf';
-  ctx.font='700 25px "DM Sans", sans-serif';
+  ctx.font='700 24px "DM Sans", sans-serif';
   ctx.fillText(`— ${currentAyat.ref}`,W/2,curY);
 
-  // 5. Sleek Frosted Countdown Capsules (Ramadhan & Syawal)
+  // 4. Countdown Ramadhan & Syawal (Simpel, Selaras & Monokrom-Slate)
   const nowMs=Date.now();
   const dRamadan=Math.max(0,Math.floor((getTargetTs('ramadan')-nowMs)/86400000));
   const dSyawal=Math.max(0,Math.floor((getTargetTs('syawal')-nowMs)/86400000));
 
-  const capX=110,capY=1310,capW=W-220,capH=225,gap=26;
-  const halfW=(capW-gap)/2;
+  const counterY=1325;
+  const leftX=W*0.30;
+  const rightX=W*0.70;
 
-  // Left Capsule: Ramadhan
-  ctx.fillStyle='rgba(255,255,255,0.04)';
-  drawRoundedRect(ctx,capX,capY,halfW,capH,34);
-  ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.1)';
+  ctx.strokeStyle='rgba(237,242,247,0.14)';
   ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(W/2,counterY-34);
+  ctx.lineTo(W/2,counterY+108);
   ctx.stroke();
 
-  ctx.fillStyle='#f59e5a';
-  ctx.font='700 20px "DM Sans", sans-serif';
-  ctx.fillText('1 RAMADHAN 1448 هـ',capX+halfW/2,capY+52);
+  ctx.fillStyle='#7fb3cf';
+  ctx.font='700 18px "DM Sans", sans-serif';
+  ctx.fillText('1 RAMADHAN 1448 هـ',leftX,counterY-12);
 
-  ctx.fillStyle='#ffffff';
-  ctx.font='700 78px "DM Sans", sans-serif';
-  ctx.fillText(String(dRamadan),capX+halfW/2,capY+138);
-
-  ctx.fillStyle='rgba(237,242,247,0.55)';
-  ctx.font='500 21px "DM Sans", sans-serif';
-  ctx.fillText('hari lagi',capX+halfW/2,capY+182);
-
-  // Right Capsule: Syawal
-  const cap2X=capX+halfW+gap;
-  ctx.fillStyle='rgba(255,255,255,0.04)';
-  drawRoundedRect(ctx,cap2X,capY,halfW,capH,34);
-  ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.1)';
-  ctx.lineWidth=1.5;
-  ctx.stroke();
-
-  ctx.fillStyle='#5ec4b4';
-  ctx.font='700 20px "DM Sans", sans-serif';
-  ctx.fillText('1 SYAWAL 1448 هـ',cap2X+halfW/2,capY+52);
-
-  ctx.fillStyle='#ffffff';
-  ctx.font='700 78px "DM Sans", sans-serif';
-  ctx.fillText(String(dSyawal),cap2X+halfW/2,capY+138);
+  ctx.fillStyle='#f8fbfd';
+  ctx.font='700 72px "DM Sans", sans-serif';
+  ctx.fillText(String(dRamadan),leftX,counterY+64);
 
   ctx.fillStyle='rgba(237,242,247,0.55)';
-  ctx.font='500 21px "DM Sans", sans-serif';
-  ctx.fillText('hari lagi',cap2X+halfW/2,capY+182);
+  ctx.font='500 19px "DM Sans", sans-serif';
+  ctx.fillText('hari lagi',leftX,counterY+102);
 
-  // 6. Clean Minimalist Web Footer
-  ctx.fillStyle='rgba(255,255,255,0.92)';
-  ctx.font='700 32px "DM Sans", sans-serif';
-  ctx.fillText('Kala',W/2,1675);
+  ctx.fillStyle='#7fb3cf';
+  ctx.font='700 18px "DM Sans", sans-serif';
+  ctx.fillText('1 SYAWAL 1448 هـ',rightX,counterY-12);
 
+  ctx.fillStyle='#f8fbfd';
+  ctx.font='700 72px "DM Sans", sans-serif';
+  ctx.fillText(String(dSyawal),rightX,counterY+64);
+
+  ctx.fillStyle='rgba(237,242,247,0.55)';
+  ctx.font='500 19px "DM Sans", sans-serif';
+  ctx.fillText('hari lagi',rightX,counterY+102);
+
+  // 5. Brand Logo (Header Cat Icon + Kala) & Subtext
+  const logoSize=46;
+  const logoGap=12;
+  ctx.font='700 40px "DM Sans", sans-serif';
+  const brandText='Kala';
+  const brandW=ctx.measureText(brandText).width;
+  const totalBrandW=logoSize+logoGap+brandW;
+  const brandStartX=(W-totalBrandW)/2;
+  const brandCenterY=1642;
+
+  if(catImg){
+    ctx.drawImage(catImg,brandStartX,brandCenterY-logoSize/2,logoSize,logoSize);
+  }else{
+    ctx.save();
+    ctx.translate(brandStartX,brandCenterY-logoSize/2);
+    ctx.scale(logoSize/24,logoSize/24);
+    ctx.fillStyle='#7fb3cf';
+    const p=new Path2D('M14 3l-3.2 4.3c-2.3.4-4.2 1.8-5.1 3.7l-2.2.8c-.5.2-.7.8-.4 1.3l1.1 1.7c.2 1.7 1.2 3.2 2.7 4L8 21h8.5c2.2 0 4-1.8 4-4v-4.5c0-4-2.5-7-5.7-7.9L14 3zm-4.8 7.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z');
+    ctx.fill(p,'evenodd');
+    ctx.restore();
+  }
+
+  ctx.textAlign='left';
+  ctx.textBaseline='middle';
+  ctx.fillStyle='#ffffff';
+  ctx.fillText(brandText,brandStartX+logoSize+logoGap,brandCenterY+1);
+
+  ctx.textAlign='center';
+  ctx.textBaseline='alphabetic';
   ctx.fillStyle='rgba(237,242,247,0.52)';
   ctx.font='400 22px "DM Sans", sans-serif';
-  ctx.fillText('Ruang waktu harian, jadwal & pengingat ibadah',W/2,1716);
+  ctx.fillText('Ruang waktu harian, jadwal & pengingat ibadah',W/2,1702);
 
   const webUrl=(window.location.hostname&&window.location.hostname!=='localhost')
     ?window.location.hostname
     :'ghibranesa.github.io/kala';
   ctx.fillStyle='#7fb3cf';
   ctx.font='600 21px "DM Sans", sans-serif';
-  ctx.fillText(webUrl,W/2,1758);
+  ctx.fillText(webUrl,W/2,1742);
 }
 
 function resetStoryPreview(){
