@@ -2364,15 +2364,18 @@ window.addEventListener('beforeinstallprompt',(e)=>{
   }
 });
 
-// 2. iPhone & iPad (iOS Safari)
+// 2. iPhone & iPad (iOS Safari / Chrome)
 if(isIos&&!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
   const banner=document.getElementById('pwa-banner');
   if(banner){
+    const title=banner.querySelector('.pwa-title');
     const sub=banner.querySelector('.pwa-sub');
     const installBtn=banner.querySelector('.pwa-btn-install');
+    if(title)title.textContent='Cara Install di iPhone:';
     if(sub){
       sub.style.whiteSpace='normal';
-      sub.innerHTML='Tap ikon <b>Share (⍐)</b> lalu pilih <b>Add to Home Screen</b>';
+      sub.style.lineHeight='1.4';
+      sub.innerHTML='Ketuk ikon <svg style="display:inline;vertical-align:-2px;margin:0 1px;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7fb3cf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> <b>Share</b> di browser, lalu pilih <b>Add to Home Screen</b>';
     }
     if(installBtn)installBtn.style.display='none';
     banner.classList.remove('hidden');
