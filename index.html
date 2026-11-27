@@ -1010,9 +1010,6 @@ function initIcons(){
   setIcon(document.getElementById('ic-sl-1'),'timer',11);
   setIcon(document.getElementById('ic-sl-2'),'clock',11);
   setIcon(document.getElementById('ic-sl-3'),'layers',11);
-  setIcon(document.getElementById('ic-sl-4'),'bar-chart',11);
-  setIcon(document.getElementById('ic-sl-5'),'briefcase',11);
-  setIcon(document.getElementById('ic-sl-6'),'calendar',11);
   setIcon(document.getElementById('ic-sl-7'),'moon',11);
   setIcon(document.getElementById('ic-ayat-refresh'),'rotate-ccw',11);
   setIcon(document.getElementById('ic-story-share'),'share',11);
@@ -1080,6 +1077,19 @@ const DEFAULTS={
   WEEKLY_SCHEDULE:{0:'off',1:'working',2:'working',3:'working',4:'working',5:'working',6:'off'},
 };
 
+// Normalisasi weeklySchedule: pastikan key selalu string "0"-"6" (JSON stringify mengubah int key jadi string)
+function normalizeSchedule(raw){
+  const def={...DEFAULTS.WEEKLY_SCHEDULE};
+  if(!raw||typeof raw!=='object')return def;
+  const out={};
+  for(let d=0;d<7;d++){
+    // Coba key string maupun number untuk kompatibilitas data lama
+    const v=raw[String(d)]||raw[d]||def[d];
+    out[String(d)]=v;
+  }
+  return out;
+}
+
 let state={
   heroMode:LS.get('heroMode','ramadan'),
   ramadanAdj:LS.get('ramadanAdj',0),
@@ -1089,7 +1099,7 @@ let state={
   shiftEnd:LS.get('shiftEnd',DEFAULTS.SHIFT_END),
   timers:LS.get('timers',[]),
   todos:LS.get('todos',[]),
-  weeklySchedule:LS.get('weeklySchedule',DEFAULTS.WEEKLY_SCHEDULE),
+  weeklySchedule:normalizeSchedule(LS.get('weeklySchedule',null)),
   todayOverride:LS.get('todayOverride',null), // {date:'YYYY-MM-DD',status:'working'|'wfh'|'libur'|null}
   calYear:null,calMonth:null,calSelected:null,
   formMode:'specific',editingId:null,editingTodoId:null,
@@ -1146,8 +1156,8 @@ function getTodayWorkStatus(){
   }
   // Check libur nasional
   if(LIBUR_NASIONAL[tk]) return 'libur';
-  // Weekly schedule (0=Sun)
-  const dow=now.getDay();
+  // Weekly schedule (0=Sun) - gunakan String key untuk konsistensi
+  const dow=String(now.getDay());
   return state.weeklySchedule[dow]||'off';
 }
 
@@ -1406,15 +1416,16 @@ function renderWdayGrid(){
   const grid=document.getElementById('wday-grid');
   grid.innerHTML='';
   for(let d=0;d<7;d++){
-    const s=state.weeklySchedule[d]||'off';
+    const dk=String(d);
+    const s=state.weeklySchedule[dk]||'off';
     const wrap=document.createElement('div');wrap.className='wday-wrap';
     const btn=document.createElement('button');
     btn.className=`wday-btn ${s}`;btn.textContent=WDAY_NAMES[d];
     btn.dataset.dow=d;
     btn.onclick=()=>{
-      const cur=state.weeklySchedule[d]||'off';
+      const cur=state.weeklySchedule[dk]||'off';
       const idx=STATUS_CYCLE.indexOf(cur);
-      state.weeklySchedule[d]=STATUS_CYCLE[(idx+1)%STATUS_CYCLE.length];
+      state.weeklySchedule[dk]=STATUS_CYCLE[(idx+1)%STATUS_CYCLE.length];
       renderWdayGrid();
     };
     const lbl=document.createElement('div');lbl.className='wday-label';
@@ -1599,9 +1610,9 @@ function openEditTodo(id){
   document.getElementById('modal-todo-title').appendChild(document.createTextNode(' Edit Tugas'));
   document.getElementById('td-name').value=td.name;
   if(td.deadline){
-    const d=new Date(td.deadline);const off=d.getTimezoneOffset();
-    const local=new Date(d.getTime()-off*60000);
-    document.getElementById('td-deadline').value=local.toISOString().slice(0,16);
+    // Tampilkan dalam WIB (UTC+7) agar konsisten
+    const dWib=new Date(td.deadline+(7*3600000));
+    document.getElementById('td-deadline').value=dWib.toISOString().slice(0,16);
   }else{
     document.getElementById('td-deadline').value='';
   }
@@ -1613,7 +1624,8 @@ function saveTodo(){
   const name=document.getElementById('td-name').value.trim();
   if(!name){document.getElementById('td-name').focus();return;}
   const dlRaw=document.getElementById('td-deadline').value;
-  const deadline=dlRaw?new Date(dlRaw).getTime():null;
+  // Parse sebagai WIB (UTC+7) agar konsisten di semua TZ user
+  const deadline=dlRaw?new Date(dlRaw+'+07:00').getTime():null;
   if(state.editingTodoId){
     const idx=state.todos.findIndex(x=>x.id===state.editingTodoId);
     if(idx>=0){
@@ -1647,9 +1659,9 @@ function openAddModal(prefillDate){
   document.getElementById('modal-timer-title').appendChild(mkIcon('timer',15));
   document.getElementById('modal-timer-title').appendChild(document.createTextNode(' Tambah Timer'));
   document.getElementById('mt-name').value='';
-  const now=new Date();const off=now.getTimezoneOffset();
-  const local=new Date(now.getTime()-off*60000);
-  document.getElementById('mt-datetime').value=prefillDate?prefillDate+'T08:00':local.toISOString().slice(0,16);
+  // Tampilkan waktu default dalam WIB (UTC+7)
+  const nowWib=new Date(Date.now()+(7*3600000));
+  document.getElementById('mt-datetime').value=prefillDate?prefillDate+'T08:00':nowWib.toISOString().slice(0,16);
   document.getElementById('mt-daily-time').value='08:00';
   setModalTimerMode('specific');
   document.getElementById('mt-save-btn').textContent='Tambah';
@@ -1668,9 +1680,9 @@ function openEditTimer(id){
     document.getElementById('mt-daily-time').value=t.dailyTime||'08:00';
   }else{
     setModalTimerMode('specific');
-    const d=new Date(t.timestamp||Date.now());const off=d.getTimezoneOffset();
-    const local=new Date(d.getTime()-off*60000);
-    document.getElementById('mt-datetime').value=local.toISOString().slice(0,16);
+    // Tampilkan dalam WIB (UTC+7) agar konsisten dengan cara kita menyimpannya
+    const d=new Date((t.timestamp||Date.now())+(7*3600000));
+    document.getElementById('mt-datetime').value=d.toISOString().slice(0,16);
   }
   document.getElementById('mt-save-btn').textContent='Simpan';
   document.getElementById('modal-timer').classList.remove('hidden');
@@ -1687,7 +1699,8 @@ function saveTimer(){
   }else{
     const dt=document.getElementById('mt-datetime').value;
     if(!dt){document.getElementById('mt-datetime').focus();return;}
-    const ts=new Date(dt).getTime();if(isNaN(ts))return;
+    // Parse sebagai WIB (UTC+7) agar konsisten di semua TZ user
+    const ts=new Date(dt+'+07:00').getTime();if(isNaN(ts))return;
     entry={name,timestamp:ts,id:state.editingId||genId()};
   }
   if(state.editingId){
@@ -1947,8 +1960,9 @@ function loadStoryCatIcon(){
 }
 
 async function renderStoryCanvas(){
-  if(document.fonts&&document.fonts.ready){
-    await document.fonts.ready;
+  // Tunggu font siap (document.fonts.ready adalah Promise, await langsung)
+  if(document.fonts&&typeof document.fonts.ready==='object'){
+    try{ await document.fonts.ready; }catch(e){}
   }
   const catImg=await loadStoryCatIcon();
   const canvas=document.getElementById('story-canvas');
@@ -2171,10 +2185,9 @@ function downloadStoryImage(){
     }
 
     const url=URL.createObjectURL(blob);
-    const isApple=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 
     // 2. Fallback iOS/iPadOS (jika Share Sheet diblokir): ubah preview jadi <img> agar bisa tekan-tahan -> Save to Photos
-    if(isApple){
+    if(IS_APPLE){
       const wrap=canvas.parentElement;
       if(wrap){
         let img=wrap.querySelector('img.story-fallback-img');
@@ -2185,7 +2198,12 @@ function downloadStoryImage(){
           canvas.style.display='none';
           wrap.appendChild(img);
         }
+        // Revoke URL lama sebelum set yang baru untuk hindari memory leak
+        if(img._blobUrl){try{URL.revokeObjectURL(img._blobUrl);}catch(e){}}
+        img._blobUrl=url;
         img.src=url;
+        // Revoke setelah gambar ter-load ke memori browser
+        img.onload=()=>{setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(e){}},3000);};
         alert('Tekan dan tahan gambar preview di atas, lalu pilih "Simpan ke Foto" (Save to Photos).');
         return;
       }
@@ -2196,7 +2214,7 @@ function downloadStoryImage(){
     link.download=fileName;
     link.href=url;
     link.click();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(e){}},1500);
   },'image/png');
 }
 
@@ -2296,10 +2314,15 @@ function updateSholatCountdown(){
   }
 }
 
+// Deteksi apakah perangkat Apple (iPhone/iPad)
+const IS_APPLE=/iphone|ipad|ipod/i.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+
 function detectLocation(forceRefresh=false){
   const locEl=document.getElementById('loc-text');
   if(!locEl)return;
 
+  // Gunakan cache jika masih valid (30 menit) DAN tidak di-force refresh
   const cached=LS.get('cachedLocation',null);
   if(!forceRefresh&&cached&&cached.lat&&cached.lon&&(Date.now()-cached.ts<1800000)){
     locEl.textContent=cached.label;
@@ -2307,6 +2330,7 @@ function detectLocation(forceRefresh=false){
     return;
   }
 
+  // Fallback: gunakan timezone perangkat sebagai perkiraan kota
   const fallbackTz=()=>{
     const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Jakarta';
     const city=tz.split('/').pop().replace(/_/g,' ');
@@ -2320,27 +2344,74 @@ function detectLocation(forceRefresh=false){
   }
 
   locEl.textContent='Mendeteksi lokasi…';
+
   navigator.geolocation.getCurrentPosition(
+    // ✅ SUCCESS: dapatkan label kota via reverse geocode
     async(pos)=>{
       const{latitude,longitude}=pos.coords;
       try{
-        const res=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`);
+        const res=await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`,
+          {signal:AbortSignal.timeout?AbortSignal.timeout(6000):undefined}
+        );
         const data=await res.json();
         const area=data.locality||data.city||data.principalSubdivision||'';
-        const region=data.principalSubdivision&&data.principalSubdivision!==area?data.principalSubdivision:(data.countryName||'');
+        const region=data.principalSubdivision&&data.principalSubdivision!==area
+          ?data.principalSubdivision:(data.countryName||'');
         const label=[area,region].filter(Boolean).join(', ')||'Lokasi Ditemukan';
         locEl.textContent=label;
         LS.set('cachedLocation',{label,lat:latitude,lon:longitude,ts:Date.now()});
         fetchPrayerTimes(latitude,longitude,area||label);
       }catch{
+        // Reverse geocode gagal tapi koordinat ada: tetap tampilkan jadwal sholat
         locEl.textContent='Koordinat Perangkat';
         fetchPrayerTimes(latitude,longitude,'Lokasi Saat Ini');
       }
     },
-    ()=>{
-      fallbackTz();
+
+    // ❌ ERROR: izin ditolak atau timeout — beri info jelas ke user
+    (err)=>{
+      if(err.code===1){ // PERMISSION_DENIED
+        locEl.textContent='⚠️ Izin lokasi ditolak';
+        // Tampilkan panduan platform-spesifik setelah delay singkat
+        // agar UI tidak freeze saat alert muncul
+        if(IS_APPLE){
+          setTimeout(()=>{
+            if(confirm(
+              'Izin lokasi ditolak di perangkat ini.\n\n'+
+              'Cara aktifkan di iPhone/iPad:\n'+
+              '① Buka Settings (Pengaturan)\n'+
+              '② Pilih Privacy & Security → Location Services\n'+
+              '③ Cari Safari atau browser Anda → Pilih "While Using"\n\n'+
+              'Setelah diaktifkan, ketuk OK lalu coba lagi.'
+            )){
+              // Coba lagi setelah user baca panduan
+              setTimeout(()=>detectLocation(true),500);
+            }else{
+              fallbackTz();
+            }
+          },400);
+        }else{
+          // Android / Desktop: tampilkan toast di loc-line saja
+          locEl.title='Aktifkan izin lokasi di browser lalu klik ikon ini lagi';
+          setTimeout(()=>fallbackTz(),2500);
+        }
+      }else if(err.code===2){ // POSITION_UNAVAILABLE
+        locEl.textContent='Sinyal GPS lemah';
+        setTimeout(()=>fallbackTz(),1500);
+      }else if(err.code===3){ // TIMEOUT
+        locEl.textContent='Timeout, coba lagi';
+        fallbackTz();
+      }else{
+        fallbackTz();
+      }
     },
-    {enableHighAccuracy:false,timeout:8000,maximumAge:600000}
+
+    {
+      enableHighAccuracy:false,
+      timeout:10000,
+      maximumAge:0  // ← 0 = selalu minta posisi baru, tidak pakai cache OS (fix utama iOS)
+    }
   );
 }
 
@@ -2390,7 +2461,7 @@ function importData(event){
       if(typeof d.shiftEnd==='string')state.shiftEnd=d.shiftEnd;
       if(Array.isArray(d.timers))state.timers=d.timers;
       if(Array.isArray(d.todos))state.todos=d.todos;
-      if(d.weeklySchedule&&typeof d.weeklySchedule==='object')state.weeklySchedule=d.weeklySchedule;
+      if(d.weeklySchedule&&typeof d.weeklySchedule==='object')state.weeklySchedule=normalizeSchedule(d.weeklySchedule);
       if(d.todayOverride!==undefined)state.todayOverride=d.todayOverride;
 
       LS.set('heroMode',state.heroMode);
@@ -2419,7 +2490,7 @@ function importData(event){
 // PWA INSTALL PROMPT (Android/Desktop + iOS Safari)
 // ============================================================
 let deferredInstallPrompt=null;
-const isIos=/iphone|ipad|ipod/i.test(window.navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+// IS_APPLE sudah didefinisikan di atas (bagian detectLocation)
 const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
 
 // 1. Android & Desktop (Chrome/Edge)
@@ -2433,7 +2504,7 @@ window.addEventListener('beforeinstallprompt',(e)=>{
 });
 
 // 2. iPhone & iPad (iOS Safari / Chrome)
-if(isIos&&!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
+if(IS_APPLE&&!isStandalone&&!sessionStorage.getItem('pwaDismissed')){
   const banner=document.getElementById('pwa-banner');
   if(banner){
     const title=banner.querySelector('.pwa-title');
