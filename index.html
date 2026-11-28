@@ -611,7 +611,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
               <div class="form-fields">
                 <div>
                   <label class="form-field-label">Nama Event</label>
-                  <input class="form-input" id="f-name" type="text" placeholder="Contoh: Deadline Laporan…">
+                  <input class="form-input" id="f-name" type="text" placeholder="Contoh: Deadline Laporan…" maxlength="100">
                 </div>
                 <div id="f-specific-fields">
                   <div class="form-row-2">
@@ -846,7 +846,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     </div>
     <div>
       <label class="modal-label">Nama Event</label>
-      <input class="modal-input" id="mt-name" type="text" placeholder="Nama event…">
+      <input class="modal-input" id="mt-name" type="text" placeholder="Nama event…" maxlength="100">
     </div>
     <div id="mt-specific-wrap">
       <label class="modal-label">Tanggal &amp; Jam Target</label>
@@ -869,7 +869,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="modal-title" id="modal-todo-title"><span class="ic" id="ic-m-todo"></span> Tambah Tugas</div>
     <div>
       <label class="modal-label">Nama Tugas</label>
-      <input class="modal-input" id="td-name" type="text" placeholder="Contoh: Kirim laporan mingguan…">
+      <input class="modal-input" id="td-name" type="text" placeholder="Contoh: Kirim laporan mingguan…" maxlength="100">
     </div>
     <div>
       <label class="modal-label">Deadline Tanggal &amp; Jam (Opsional)</label>
@@ -1837,11 +1837,18 @@ function selectCalDay(dayNum,dateStr){
 // ============================================================
 function resetAll(){
   if(!confirm('Reset semua pengaturan & hapus semua timer?'))return;
-  localStorage.clear();
+  // Hapus hanya key milik Kala — bukan localStorage.clear() agar cache browser lain tidak ikut terhapus
+  const kalaKeys=[
+    'heroMode','ramadanAdj','syawalAdj','pulangTime','shiftStart','shiftEnd',
+    'timers','todos','weeklySchedule','todayOverride','cachedLocation'
+  ];
+  kalaKeys.forEach(k=>{try{localStorage.removeItem(k);}catch{}});
+  // Hapus juga cache jadwal sholat (key dinamis: sholat_YYYY-MM-DD_lat_lon)
+  try{Object.keys(localStorage).filter(k=>k.startsWith('sholat_')).forEach(k=>localStorage.removeItem(k));}catch{}
   const now=new Date();
   state={heroMode:'ramadan',ramadanAdj:0,syawalAdj:0,
     pulangTime:DEFAULTS.PULANG_TIME,shiftStart:DEFAULTS.SHIFT_START,shiftEnd:DEFAULTS.SHIFT_END,
-    timers:[],todos:[],weeklySchedule:{...DEFAULTS.WEEKLY_SCHEDULE},todayOverride:null,
+    timers:[],todos:[],weeklySchedule:normalizeSchedule(null),todayOverride:null,
     calYear:now.getFullYear(),calMonth:now.getMonth(),calSelected:null,formMode:'specific',editingId:null,editingTodoId:null};
   document.getElementById('gauge-start').value=state.shiftStart;
   document.getElementById('gauge-end').value=state.shiftEnd;
@@ -1886,9 +1893,15 @@ async function fetchRandomAyat(){
   if(btn)btn.disabled=true;
   if(arEl)arEl.style.opacity='0.45';
   txtEl.style.opacity='0.5';
+  const _ayatCtrl=new AbortController();
+  const _ayatTimer=setTimeout(()=>_ayatCtrl.abort(),8000);
   try{
     const randomAyahNum=Math.floor(Math.random()*6236)+1;
-    const res=await fetch(`https://api.alquran.cloud/v1/ayah/${randomAyahNum}/editions/quran-uthmani,id.indonesian`);
+    const res=await fetch(
+      `https://api.alquran.cloud/v1/ayah/${randomAyahNum}/editions/quran-uthmani,id.indonesian`,
+      {signal:_ayatCtrl.signal}
+    );
+    clearTimeout(_ayatTimer);
     const json=await res.json();
     if(json.code===200&&Array.isArray(json.data)&&json.data.length>=2){
       const arData=json.data[0];
@@ -1908,6 +1921,7 @@ async function fetchRandomAyat(){
       throw new Error('Invalid response');
     }
   }catch(e){
+    clearTimeout(_ayatTimer);
     currentAyat={
       ref:'QS. Al-Insyirah : 6',
       arabic:'إِنَّ مَعَ الْعُسْرِ يُسْرًا',
@@ -1991,6 +2005,7 @@ async function renderStoryCanvas(){
 
   // 2. Top Header: Bismillah + Masehi & Hijriah
   ctx.textAlign='center';
+  ctx.textBaseline='alphabetic'; // reset eksplisit sebelum semua blok teks
   ctx.font='400 42px "Amiri", serif';
   ctx.fillStyle='rgba(237,242,247,0.58)';
   ctx.fillText('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',W/2,335);
@@ -2243,11 +2258,17 @@ async function fetchPrayerTimes(lat=-6.2088,lon=106.8456,locLabel='Jakarta'){
     return;
   }
 
+  const _ptCtrl=new AbortController();
+  const _ptTimer=setTimeout(()=>_ptCtrl.abort(),10000);
   try{
     const now=new Date();
     const dStr=`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()}`;
     // method=20 adalah standar Kementerian Agama Republik Indonesia (Kemenag)
-    const res=await fetch(`https://api.aladhan.com/v1/timings/${dStr}?latitude=${lat}&longitude=${lon}&method=20`);
+    const res=await fetch(
+      `https://api.aladhan.com/v1/timings/${dStr}?latitude=${lat}&longitude=${lon}&method=20`,
+      {signal:_ptCtrl.signal}
+    );
+    clearTimeout(_ptTimer);
     const json=await res.json();
     if(json.code===200&&json.data&&json.data.timings){
       const t=json.data.timings;
@@ -2260,10 +2281,26 @@ async function fetchPrayerTimes(lat=-6.2088,lon=106.8456,locLabel='Jakarta'){
       };
       LS.set(cacheKey,prayerTimings);
       renderPrayerTimes();
+      if(window._prayerRetryTimer){clearTimeout(window._prayerRetryTimer);window._prayerRetryTimer=null;}
+    }else{
+      throw new Error('bad response');
     }
   }catch{
+    clearTimeout(_ptTimer);
     const badge=document.getElementById('sholat-next-badge');
-    if(badge)badge.textContent='Gagal memuat jadwal';
+    // Auto-retry 1x setelah 5 detik — tidak retry kalau sudah ada yang pending
+    if(!window._prayerRetryTimer){
+      if(badge)badge.textContent='Gagal memuat · mencoba lagi…';
+      window._prayerRetryTimer=setTimeout(async()=>{
+        window._prayerRetryTimer=null;
+        const b=document.getElementById('sholat-next-badge');
+        if(b)b.textContent='Mencoba lagi…';
+        await fetchPrayerTimes(lat,lon,locLabel);
+        if(!prayerTimings){const b2=document.getElementById('sholat-next-badge');if(b2)b2.textContent='Gagal memuat jadwal';}
+      },5000);
+    }else{
+      if(badge)badge.textContent='Gagal memuat jadwal';
+    }
   }
 }
 
@@ -2350,10 +2387,13 @@ function detectLocation(forceRefresh=false){
     async(pos)=>{
       const{latitude,longitude}=pos.coords;
       try{
+        const _geoCtrl=new AbortController();
+        const _geoTimer=setTimeout(()=>_geoCtrl.abort(),6000);
         const res=await fetch(
           `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=id`,
-          {signal:AbortSignal.timeout?AbortSignal.timeout(6000):undefined}
+          {signal:_geoCtrl.signal}
         );
+        clearTimeout(_geoTimer);
         const data=await res.json();
         const area=data.locality||data.city||data.principalSubdivision||'';
         const region=data.principalSubdivision&&data.principalSubdivision!==area
@@ -2557,7 +2597,13 @@ window.addEventListener('appinstalled',()=>{
     }).catch(()=>{});
     let refreshing=false;
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
-      if(!refreshing){refreshing=true;window.location.reload();}
+      if(refreshing)return;
+      // Guard: skip reload kalau tab baru saja reload dalam 3 detik (cegah loop multi-tab)
+      const lastReload=parseInt(sessionStorage.getItem('sw_last_reload')||'0',10);
+      if(Date.now()-lastReload<3000)return;
+      refreshing=true;
+      sessionStorage.setItem('sw_last_reload',String(Date.now()));
+      window.location.reload();
     });
   }
 })();
